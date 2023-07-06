@@ -1,0 +1,135 @@
+{% extends 'baseAdmin.html.twig' %}
+
+{% block title %}Hello AdminController!{% endblock %}
+
+{% block body %}
+   <div class="container-scroller">
+      <div class="container-fluid page-body-wrapper ">
+        <div class="main-panel col-lg-12">
+        <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-primary btn-fw col-lg-1 float-right" data-toggle="modal" data-target="#SignIn">Add Client +</button>
+        </div>
+          <div class="content-wrapper">
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Liste des clients</h4>
+                    </p>
+                    <table class="table table-striped">
+                      <thead>
+                      
+                        <tr>
+                          <th> Id </th>
+                          <th> Nom </th>
+                          <th> Prenom </th>
+                          <th> age </th>
+                          <th> genre </th>
+                          <th> adresse </th>
+                          <th> ville </th>
+                          <th> phone </th>
+                          <th> Actions </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {% for c in users %}
+                        
+                      
+                        <tr>
+                          <td class="py-1">
+                            {{c.id}}
+                          </td>
+                          <td> {{c.nom}} </td>
+                          <td> {{c.prenom}} </td>
+                          <td> {{c.age | date('d-M-Y')}} </td>
+                          <td> {{c.genre}} </td>
+                          <td> {{c.adresse}} </td>
+                          <td> {{c.ville}} </td>
+                          <td> {{c.phone}} </td>
+                          <td>
+                            <div class="dropdown">
+                              <a class="dropdown-toggle" href="#" role="button" id="actionsDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v"></i>
+                              </a>
+                              <ul class="dropdown-menu" aria-labelledby="actionsDropdown">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-edit"></i> Edit</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-trash-alt"></i> Delete</a></li>
+                                <li><a class="dropdown-item" href="{{path('app_more',{'id':c.id})}}">More ..</a></li>
+                              </ul>
+                            </div>
+                          </td>
+                        </tr>
+
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+          </div>
+          <!-- content-wrapper ends -->
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+
+
+<!-- Button trigger modal -->
+
+<!-- Modal -->
+<div class="modal fade" id="SignIn" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add new client</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <style>
+        ::placeholder {
+            color: gray;
+        }
+    </style>
+      <div class="modal-body">
+        {{ form_start(addClient) }}
+        <div class="mb-2">
+            {{ form_widget(addClient.nom, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
+        </div>
+        <div class="mb-2">
+            {{ form_widget(addClient.prenom, {'attr': {'class': 'form-control', 'placeholder': 'Prénom'}}) }}
+        </div>
+        <div class="mb-2">
+            {{ form_widget(addClient.age, {'attr': {'class': 'form-control', 'placeholder': 'Âge'}}) }}
+        </div>
+        <div class="mb-2">
+            {{ form_widget(addClient.genre, {'attr': {'class': 'form-control', 'placeholder': 'Genre'}}) }}
+        </div>
+        <div class="mb-2">
+            {{ form_widget(addClient.adresse, {'attr': {'class': 'form-control', 'placeholder': 'Adresse'}}) }}
+        </div>
+        <div class="mb-2">
+            {{ form_widget(addClient.ville, {'attr': {'class': 'form-control', 'placeholder': 'Ville'}}) }}
+        </div>
+        <div>
+            {{ form_widget(addClient.phone, {'attr': {'class': 'form-control', 'placeholder': 'Phone'}}) }}
+        </div>
+        
+      </div>
+      <div class="modal-footer">
+        {{ form_widget(addClient.save, {'label': 'Add new +', 'attr': {'class': 'btn btn-primary'}}) }}
+        {{ form_end(addClient)}}
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+
+
+<a href="{{ path('generate_pdf') }}" class="btn btn-primary">Generate PDF</a>
+
+
+
+
+{% endblock %}

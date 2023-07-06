@@ -1,0 +1,79 @@
+{% extends 'baseAdmin.html.twig' %}
+
+{% block title %}Hello AdminController!{% endblock %}
+
+{% block body %}
+   <div class="container-scroller">
+      <div class="container-fluid page-body-wrapper ">
+        <div class="main-panel col-lg-12">
+        <div class="d-flex justify-content-end">
+        </div>
+          <div class="content-wrapper">
+            <div class="col-lg-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title"><span class="text-danger">Informations sur le client</span></h4>
+                    </p>
+                    {# <table class="table table-striped">
+                      <thead>
+                      
+                        <tr>
+                          <th> Id </th>
+                          <th> Nom </th>
+                          <th> Prenom </th>
+                          <th> age </th>
+                          <th> genre </th>
+                          <th> adresse </th>
+                          <th> ville </th>
+                          <th> phone </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+
+                        <tr>
+                          <td class="py-1">
+                            {{client.id}}
+                          </td>
+                          <td> {{client.nom}} </td>
+                          <td> {{client.prenom}} </td>
+                          <td> {{client.age | date('d-M-Y')}} </td>
+                          <td> {{client.genre}} </td>
+                          <td> {{client.adresse}} </td>
+                          <td> {{client.ville}} </td>
+                          <td> {{client.phone}} </td>
+
+                        </tr>
+                      </tbody>
+                    </table> #}
+
+                    <h5><span class="text-success">Id :</span> {{client.id}}</h5>
+                    <h5><span class="text-success">Nom :</span> {{client.nom}}</h5>
+                    <h5><span class="text-success">Prenom :</span> {{client.prenom}}</h5>
+                    <h5><span class="text-success">Age :</span> {{client.age | date('d-M-Y')}}</h5>
+                    <h5><span class="text-success">Genre :</span> {{client.genre}}</h5>
+                    <h5><span class="text-success">Adresse :</span> {{client.adresse}}</h5>
+                    <h5><span class="text-success">Ville :</span> {{client.ville}}</h5>
+                    <h5><span class="text-success">Phone :</span> {{client.phone}}</h5>
+                    <div class="mt-5">        
+                        <a href="{{ path('generate_pdf') }}" class="btn btn-primary">Generate PDF</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+          <!-- content-wrapper ends -->
+        </div>
+        <!-- main-panel ends -->
+      </div>
+        
+    </div>
+
+
+
+
+
+
+
+
+
+{% endblock %}
