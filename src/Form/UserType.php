@@ -10,7 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
-class UserType extends AbstractType
+class ClientType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -30,7 +30,7 @@ class UserType extends AbstractType
             ])
             ->add('age', DateType::class, [
                 'widget' => 'single_text',
-                'label' => 'Age',
+                'label' => 'Date de naissance',
                 'attr' => [
                     'class' => 'form-control',
                     'placeholder' => 'Age',

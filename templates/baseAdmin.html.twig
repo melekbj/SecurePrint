@@ -68,10 +68,10 @@
                 <a class="navbar-brand brand-logo" href="{{path('app_login')}}"><img style="height:63px;" src="{{ asset('assetsA/images/logo.png')}}" alt="logo" /></a>
                 </div>
                 <div class="navbar-menu-wrapper d-flex align-items-stretch">
-                <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                {# <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                     <span class="mdi mdi-menu"></span>
-                </button>
-                <div class="search-field d-none d-xl-block">
+                </button> #}
+                {# <div class="search-field d-none d-xl-block">
                     <form class="d-flex align-items-center h-100" action="#">
                     <div class="input-group">
                         <div class="input-group-prepend bg-transparent">
@@ -80,7 +80,7 @@
                         <input type="text" class="form-control bg-transparent border-0" placeholder="Search products">
                     </div>
                     </form>
-                </div>
+                </div> #}
                 <ul class="navbar-nav navbar-nav-right">
                     {# <li class="nav-item  dropdown d-none d-md-block">
                     <a class="nav-link dropdown-toggle" id="reportDropdown" href="#" data-toggle="dropdown" aria-expanded="false"> Reports </a>
@@ -148,7 +148,7 @@
                         <img class="img-avatar img-avatar48 img-avatar-thumb" src="{{ asset('/images/fakhri.jpg')}}" alt="">
                         </div>
                         <div class="p-2">
-                        <h5 class="dropdown-header text-uppercase pl-2 text-dark">User Options</h5>
+                        <h5 class="dropdown-header text-uppercase pl-2 text-dark">Options</h5>
                         {# <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" href="#">
                             <span>Inbox</span>
                             <span class="p-0">
@@ -157,7 +157,7 @@
                             </span>
                         </a> #}
                         <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" href="#">
-                            <span>Profile</span>
+                            <span>Profil</span>
                             <span class="p-0">
                             {# <span class="badge badge-success">1</span> #}
                             <i class="mdi mdi-account-outline ml-1"></i>
@@ -174,7 +174,7 @@
                             <i class="mdi mdi-lock ml-1"></i>
                         </a> #}
                         <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" href="{{path('app_logout')}}">
-                            <span>Log Out</span>
+                            <span>Se déconnecter</span>
                             <i class="mdi mdi-logout ml-1"></i>
                         </a>
                         </div>
@@ -283,7 +283,7 @@
                     <li class="nav-item">
                     <a class="nav-link" href="{{path('app_admin')}}">
                         <span class="icon-bg"><i class="mdi mdi-cube menu-icon"></i></span>
-                        <span class="menu-title">Dashboard</span>
+                        <span class="menu-title">Tableau de bord</span>
                     </a>
                     {# </li>
                     <li class="nav-item">
@@ -312,34 +312,34 @@
                         <span class="menu-title">Stock</span>
                     </a>
                     </li>
-                    <li class="nav-item">
-                    <a class="nav-link" href="pages/charts/chartjs.html">
-                        <span class="icon-bg"><i class="mdi mdi-chart-bar menu-icon"></i></span>
-                        <span class="menu-title">Charts</span>
-                    </a>
+                    {# <li class="nav-item">
+                        <a class="nav-link" href="pages/charts/chartjs.html">
+                            <span class="icon-bg"><i class="mdi mdi-chart-bar menu-icon"></i></span>
+                            <span class="menu-title">Charts</span>
+                        </a>
                     </li>
                     <li class="nav-item">
-                    <a class="nav-link" href="pages/tables/basic-table.html">
-                        <span class="icon-bg"><i class="mdi mdi-table-large menu-icon"></i></span>
-                        <span class="menu-title">Tables</span>
-                    </a>
+                        <a class="nav-link" href="pages/tables/basic-table.html">
+                            <span class="icon-bg"><i class="mdi mdi-table-large menu-icon"></i></span>
+                            <span class="menu-title">Tables</span>
+                        </a>
                     </li>
                     <li class="nav-item">
-                    <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
-                        <span class="icon-bg"><i class="mdi mdi-lock menu-icon"></i></span>
-                        <span class="menu-title">User Pages</span>
-                        <i class="menu-arrow"></i>
-                    </a>
-                    {# <div class="collapse" id="auth">
-                        <ul class="nav flex-column sub-menu">
-                        <li class="nav-item"> <a class="nav-link" href="pages/samples/blank-page.html"> Blank Page </a></li>
-                        <li class="nav-item"> <a class="nav-link" href="pages/samples/login.html"> Login </a></li>
-                        <li class="nav-item"> <a class="nav-link" href="pages/samples/register.html"> Register </a></li>
-                        <li class="nav-item"> <a class="nav-link" href="pages/samples/error-404.html"> 404 </a></li>
-                        <li class="nav-item"> <a class="nav-link" href="pages/samples/error-500.html"> 500 </a></li>
-                        </ul>
-                    </div> #}
-                    </li>
+                        <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
+                            <span class="icon-bg"><i class="mdi mdi-lock menu-icon"></i></span>
+                            <span class="menu-title">User Pages</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="auth">
+                            <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="pages/samples/blank-page.html"> Blank Page </a></li>
+                            <li class="nav-item"> <a class="nav-link" href="pages/samples/login.html"> Login </a></li>
+                            <li class="nav-item"> <a class="nav-link" href="pages/samples/register.html"> Register </a></li>
+                            <li class="nav-item"> <a class="nav-link" href="pages/samples/error-404.html"> 404 </a></li>
+                            <li class="nav-item"> <a class="nav-link" href="pages/samples/error-500.html"> 500 </a></li>
+                            </ul>
+                        </div>
+                    </li> #}
                     
             
                 </ul>

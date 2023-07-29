@@ -3,11 +3,12 @@
 namespace App\Controller;
 
 use Knp\Snappy\Pdf;
-use App\Form\UserType;
+use App\Form\ClientType;
 use App\Entity\Clients;
 use App\Entity\Materiel;
 use App\Form\MaterielType;
 use App\Repository\UserRepository;
+use App\Repository\ClientsRepository;
 use App\Repository\MaterielRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,7 +34,7 @@ class AdminController extends AbstractController
         $users = $em->getRepository(Clients::class)->findAll();
 
         $clients = new Clients();
-        $form = $this->createForm(UserType::class, $clients);
+        $form = $this->createForm(ClientType::class, $clients);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()){
@@ -45,52 +46,74 @@ class AdminController extends AbstractController
         }
 
 
-        return $this->render('admin/ListeClients.html.twig', [
+        return $this->render('admin/clients/ListeClients.html.twig', [
             'controller_name' => 'AdminController',
             'users' => $users,  
             'addClient' =>$form->createView(),
         ]);
     }
 
-    #[Route('/updateU/{id}', name: 'app_updateU')]
-    public function updateU($id, Request $request, UserRepository $rep, ManagerRegistry $doctrine): Response
+    #[Route('/update_client/{id}', name: 'app_edit_client')]
+    public function updateClient($id, Request $request, ClientsRepository $rep, PersistenceManagerRegistry $doctrine): Response
     {
-        // Get the current user
-        $user = $this->getUser();
-        
-        // Get the image associated with the user
-        $image = $user->getImage();
         // récupérer la classe à modifier
-        $users = $rep->find($id);
+        $clients = $rep->find($id);
         // créer un formulaire
-        $form = $this->createForm(UserType::class, $users);
+        $form = $this->createForm(ClientType::class, $clients);
         // récupérer les données saisies
         $form->handleRequest($request);
         // vérifier si le formulaire est soumis et valide
         if ($form->isSubmitted() && $form->isValid()) {
             // récupérer les données saisies
-            $users = $form->getData();
+            $clients = $form->getData();
             // persister les données
             $rep = $doctrine->getManager();
-            $rep->persist($users);
+            $rep->persist($clients);
             $rep->flush();
             //flash message
-            $this->addFlash('success', 'User updated successfully!');
-            return $this->redirectToRoute('app_users');
+            $this->addFlash('success', 'Le client a été mis à jour avec succès!');
+            return $this->redirectToRoute('app_liste_clients');
         }
-        return $this->render('admin/EditUsers.html.twig', [
-            'form' => $form->createView(),
-            'image' => $image,
+        return $this->render('admin/clients/updateClient.html.twig', [
+            'editForm' => $form->createView(),
         ]);
     }
 
-    // #[Route('/liste_des_materiels', name: 'app_stock')]
-    // public function stock(): Response
-    // {
-    //     return $this->render('admin/ListeMateriels.html.twig', [
-    //         'controller_name' => 'AdminController',
-    //     ]);
-    // }
+    #[Route('/delete_client/{id}', name: 'app_delete_client')]
+    public function deleteClient($id, ClientsRepository $rep, PersistenceManagerRegistry $doctrine ): Response
+    {
+
+        //recuperer la classe a supprimer
+        $clients = $rep->find($id);
+        $rep=$doctrine->getManager();
+        //supprimer la classe        
+        $rep->remove($clients);
+        $rep->flush();
+        //flash message
+        $this->addFlash('success', 'Client removed!');
+        return $this->redirectToRoute('app_liste_clients'); 
+        
+    }
+
+   
+
+    #[Route('/deleteM/{id}', name: 'app_delete_materiel')]
+    public function deleteM($id, MaterielRepository $rep, PersistenceManagerRegistry $doctrine ): Response
+    {
+
+        //recuperer la classe a supprimer
+        $materiels = $rep->find($id);
+        $rep=$doctrine->getManager();
+        //supprimer la classe        
+        $rep->remove($materiels);
+        $rep->flush();
+        //flash message
+        $this->addFlash('success', 'Materiel supprimé!');
+        return $this->redirectToRoute('app_stock'); 
+        
+    }
+
+    
 
     #[Route('/liste_des_materiels', name: 'app_stock')]
     public function stock(PersistenceManagerRegistry $doctrine, Request $request): Response
@@ -111,7 +134,7 @@ class AdminController extends AbstractController
         }
 
 
-        return $this->render('admin/ListeMateriels.html.twig', [
+        return $this->render('admin/materiels/ListeMateriels.html.twig', [
             'controller_name' => 'AdminController',
             'materiels' => $materiels,  
             'addMateriel' =>$form->createView(),
@@ -139,26 +162,12 @@ class AdminController extends AbstractController
             $this->addFlash('success', 'Le matériel a été mis à jour avec succès!');
             return $this->redirectToRoute('app_stock');
         }
-        return $this->render('admin/EditMateriel.html.twig', [
+        return $this->render('admin/materiels/EditMateriel.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
-    #[Route('/deleteM/{id}', name: 'app_delete_materiel')]
-    public function deleteU($id, MaterielRepository $rep, PersistenceManagerRegistry $doctrine ): Response
-    {
-
-        //recuperer la classe a supprimer
-        $materiels = $rep->find($id);
-        $rep=$doctrine->getManager();
-        //supprimer la classe        
-        $rep->remove($materiels);
-        $rep->flush();
-        //flash message
-        $this->addFlash('success', 'Materiel supprimé!');
-        return $this->redirectToRoute('app_stock'); 
-        
-    }
+    
 
     #[Route('/generatePdf', name: 'generate_pdf')]
     public function generatePdf(Pdf $snappy)
