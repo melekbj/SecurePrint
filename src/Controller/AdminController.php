@@ -169,10 +169,31 @@ class AdminController extends AbstractController
 
     
 
-    #[Route('/generatePdf', name: 'generate_pdf')]
-    public function generatePdf(Pdf $snappy)
+    #[Route('/generatePdf/{id}', name: 'generate_pdf')]
+    public function generatePdf(Pdf $snappy, int $id, PersistenceManagerRegistry $doctrine)
     {
-        $html = $this->renderView('/resources/devis.html.twig');
+        // Fetch the user details from the database using the ID
+        $user = $this->getUser();
+
+        $entityManager = $doctrine->getManager();
+        $clientRepository = $entityManager->getRepository(Clients::class);
+        $client = $clientRepository->find($id);
+
+        if (!$client) {
+            throw $this->createNotFoundException('User not found with ID: ' . $id);
+        }
+
+        // Get the image path (assuming the image is stored in public/assets/img)
+        $imagePath = $this->getParameter('kernel.project_dir') . '/public/assets/img/logo.png';
+        
+        // Encode the image into base64
+        $base64Image = base64_encode(file_get_contents($imagePath));
+
+        // Render the Twig template and pass the user details and the base64-encoded image
+        $html = $this->renderView('/resources/devis.html.twig', [
+            'client' => $client,
+            'base64Image' => $base64Image,
+        ]);
 
         $pdfContent = $snappy->getOutputFromHtml($html);
 
@@ -182,7 +203,7 @@ class AdminController extends AbstractController
             200,
             [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'attachment; filename="example.pdf"',
+                'Content-Disposition' => 'attachment; filename="devis.pdf"',
             ]
         );
     }

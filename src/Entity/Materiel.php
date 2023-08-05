@@ -30,6 +30,7 @@ class Materiel
     #[ORM\Column(length: 255)]
     private ?string $reference = null;
 
+
     public function getId(): ?int
     {
         return $this->id;
@@ -70,4 +71,6 @@ class Materiel
 
         return $this;
     }
+
+
 }

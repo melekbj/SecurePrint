@@ -13,6 +13,9 @@
     <hr>
 
     <h4>Account Information</h4>
+    {{ form_row(registerForm.fullname, {'attr': {'class': 'form-control'}}) }}
+    {{ form_row(registerForm.poste, {'attr': {'class': 'form-control'}}) }}
+    {{ form_row(registerForm.mf, {'attr': {'class': 'form-control'}}) }}
     {{ form_row(registerForm.email, {'attr': {'class': 'form-control'}}) }}
     {{ form_row(registerForm.password.first, {'attr': {'class': 'form-control'}}) }}
     {{ form_row(registerForm.password.second, {'attr': {'class': 'form-control'}}) }}

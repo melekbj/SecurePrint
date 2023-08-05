@@ -26,7 +26,10 @@ class RegisterType extends AbstractType
                 'Admin' => 'ROLE_ADMIN',
             ],
         ])
+        ->add('fullname')
         ->add('email')
+        ->add('poste')
+        ->add('mf')
         ->add('password', RepeatedType::class, [
             'type' => PasswordType::class,
             'invalid_message' => 'The password fields must match.',

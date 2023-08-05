@@ -55,7 +55,7 @@
                     <h5><span class="text-success">Ville :</span> {{client.ville}}</h5>
                     <h5><span class="text-success">Phone :</span> {{client.phone}}</h5>
                     <div class="mt-5">        
-                        <a href="{{ path('generate_pdf') }}" class="btn btn-primary">Generate PDF</a>
+                        <a href="{{path('generate_pdf',{'id':client.id})}}" class="btn btn-primary">Generate PDF</a>
                     </div>
                   </div>
                 </div>

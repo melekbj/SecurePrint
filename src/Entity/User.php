@@ -31,6 +31,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $full_name = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $poste = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $mf = null;
+
 
     public function getId(): ?int
     {
@@ -112,6 +118,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setFullName(string $full_name): self
     {
         $this->full_name = $full_name;
+
+        return $this;
+    }
+
+    public function getPoste(): ?string
+    {
+        return $this->poste;
+    }
+
+    public function setPoste(string $poste): self
+    {
+        $this->poste = $poste;
+
+        return $this;
+    }
+
+    public function getMf(): ?string
+    {
+        return $this->mf;
+    }
+
+    public function setMf(?string $mf): self
+    {
+        $this->mf = $mf;
 
         return $this;
     }
