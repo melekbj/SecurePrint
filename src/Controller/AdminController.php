@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use Knp\Snappy\Pdf;
-use App\Form\ClientType;
 use App\Entity\Clients;
+use App\Entity\Commande;
 use App\Entity\Materiel;
+use App\Form\ClientType;
+use App\Form\CommandeType;
 use App\Form\MaterielType;
 use App\Repository\UserRepository;
 use App\Repository\ClientsRepository;
@@ -169,44 +171,7 @@ class AdminController extends AbstractController
 
     
 
-    #[Route('/generatePdf/{id}', name: 'generate_pdf')]
-    public function generatePdf(Pdf $snappy, int $id, PersistenceManagerRegistry $doctrine)
-    {
-        // Fetch the user details from the database using the ID
-        $user = $this->getUser();
-
-        $entityManager = $doctrine->getManager();
-        $clientRepository = $entityManager->getRepository(Clients::class);
-        $client = $clientRepository->find($id);
-
-        if (!$client) {
-            throw $this->createNotFoundException('User not found with ID: ' . $id);
-        }
-
-        // Get the image path (assuming the image is stored in public/assets/img)
-        $imagePath = $this->getParameter('kernel.project_dir') . '/public/assets/img/logo.png';
-        
-        // Encode the image into base64
-        $base64Image = base64_encode(file_get_contents($imagePath));
-
-        // Render the Twig template and pass the user details and the base64-encoded image
-        $html = $this->renderView('/resources/devis.html.twig', [
-            'client' => $client,
-            'base64Image' => $base64Image,
-        ]);
-
-        $pdfContent = $snappy->getOutputFromHtml($html);
-
-        // You can return the PDF as a response
-        return new Response(
-            $pdfContent,
-            200,
-            [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'attachment; filename="devis.pdf"',
-            ]
-        );
-    }
+    
     
     #[Route('/detail_client/{id}', name: 'app_more')]
     public function show($id,PersistenceManagerRegistry $doctrine): Response
@@ -225,8 +190,67 @@ class AdminController extends AbstractController
         ]);
     }
 
+    #[Route('/generatePdf/{id}', name: 'generate_pdf')]
+    public function generatePdf(Pdf $snappy, int $id, PersistenceManagerRegistry $doctrine)
+    {
+        // Fetch the user details from the database using the ID
+        $user = $this->getUser();
+    
+        $entityManager = $doctrine->getManager();
+        $clientRepository = $entityManager->getRepository(Clients::class);
+        $client = $clientRepository->find($id);
+    
+        if (!$client) {
+            throw $this->createNotFoundException('User not found with ID: ' . $id);
+        }
+    
+        // Fetch the commandes associated with the client
+        $commandes = $client->getCommandes();
+    
+        // Render the Twig template and pass the user details and the base64-encoded image
+        $html = $this->renderView('/resources/devis.html.twig', [
+            'client' => $client,
+            'commandes' => $commandes,
+        ]);
+    
+        $pdfContent = $snappy->getOutputFromHtml($html);
+    
+        // You can return the PDF as a response
+        return new Response(
+            $pdfContent,
+            200,
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="devis.pdf"',
+            ]
+        );
+    }
+    
+    //generate addCommande function
+    #[Route('/liste_commande', name: 'app_liste_commandes')]
+    public function addCommande(PersistenceManagerRegistry $doctrine, Request $request): Response
+    {
+        $em = $doctrine->getManager();
+        $commandes = $em->getRepository(Commande::class)->findAll();
+
+        $commande = new Commande();
+        $form = $this->createForm(CommandeType::class, $commande);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $entityManager = $doctrine->getManager();
+            $entityManager->persist($commande);
+            $entityManager->flush();
+            $this->addFlash('success', 'Commande ajouté avec succès');
+            return $this->redirectToRoute('app_liste_commandes');
+        }
+        return $this->render('admin/listeCommandes.html.twig', [
+            'commandes' => $commandes,
+            'addCommande' =>$form->createView(),
+        ]);
 
 
+    }
 
 
 }

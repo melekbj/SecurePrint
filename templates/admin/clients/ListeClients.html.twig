@@ -1,6 +1,5 @@
 {% extends 'baseAdmin.html.twig' %}
 
-{% block title %}Hello AdminController!{% endblock %}
 
 {% block body %}
    <div class="container-scroller">
@@ -9,8 +8,6 @@
         <div class="d-flex justify-content-end">
         <button type="button" class="btn btn-primary btn-fw col-lg-1 float-right" data-toggle="modal" data-target="#addClient">Ajouter Client +</button>
         </div>
-
-
 
           <div class="content-wrapper">
                 
@@ -25,14 +22,11 @@
                   <h5 class="card-title text-center">Liste des clients</h5>
                 </div>
                 <div class="card-body">
-                  <div class="table-responsive">
+                  <div class="">
                     <table class="table table-bordered table-hover">
                       <thead>
                         <tr>
-                          <th>Nom</th>
-                          <th>Prenom</th>
-                          <th>age</th>
-                          <th>genre</th>
+                          <th>Nom et Prenom</th>
                           <th>adresse</th>
                           <th>ville</th>
                           <th>phone</th>
@@ -42,10 +36,7 @@
                       <tbody>
                         {% for c in users %}
                           <tr>
-                            <td>{{c.nom}}</td>
-                            <td>{{c.prenom}}</td>
-                            <td>{{c.age | date('d-M-Y')}}</td>
-                            <td>{{c.genre}}</td>
+                            <td>{{c.nomprenom}}</td>
                             <td>{{c.adresse}}</td>
                             <td>{{c.ville}}</td>
                             <td>{{c.phone}}</td>
@@ -114,16 +105,7 @@
       <div class="modal-body">
         {{ form_start(addClient) }}
         <div class="mb-2">
-            {{ form_widget(addClient.nom, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
-        </div>
-        <div class="mb-2">
-            {{ form_widget(addClient.prenom, {'attr': {'class': 'form-control', 'placeholder': 'Prénom'}}) }}
-        </div>
-        <div class="mb-2">
-            {{ form_widget(addClient.age, {'attr': {'class': 'form-control', 'placeholder': 'Âge'}}) }}
-        </div>
-        <div class="mb-2">
-            {{ form_widget(addClient.genre, {'attr': {'class': 'form-control', 'placeholder': 'Genre'}}) }}
+            {{ form_widget(addClient.nom_prenom, {'attr': {'class': 'form-control', 'placeholder': 'Nom et Prenom'}}) }}
         </div>
         <div class="mb-2">
             {{ form_widget(addClient.adresse, {'attr': {'class': 'form-control', 'placeholder': 'Adresse'}}) }}

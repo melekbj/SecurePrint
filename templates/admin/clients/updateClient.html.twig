@@ -9,16 +9,7 @@
 
 {{ form_start(editForm) }}
         <div class="mb-2">
-            {{ form_widget(editForm.nom, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
-        </div>
-        <div class="mb-2">
-            {{ form_widget(editForm.prenom, {'attr': {'class': 'form-control', 'placeholder': 'Prénom'}}) }}
-        </div>
-        <div class="mb-2">
-            {{ form_widget(editForm.age, {'attr': {'class': 'form-control', 'placeholder': 'Âge'}}) }}
-        </div>
-        <div class="mb-2">
-            {{ form_widget(editForm.genre, {'attr': {'class': 'form-control', 'placeholder': 'Genre'}}) }}
+            {{ form_widget(editForm.nom_prenom, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
         </div>
         <div class="mb-2">
             {{ form_widget(editForm.adresse, {'attr': {'class': 'form-control', 'placeholder': 'Adresse'}}) }}

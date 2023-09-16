@@ -1,6 +1,5 @@
 {% extends 'baseAdmin.html.twig' %}
 
-{% block title %}Hello AdminController!{% endblock %}
 
 {% block body %}
    <div class="container-scroller">
@@ -47,15 +46,12 @@
                     </table> #}
 
                     <h5><span class="text-success">Id :</span> {{client.id}}</h5>
-                    <h5><span class="text-success">Nom :</span> {{client.nom}}</h5>
-                    <h5><span class="text-success">Prenom :</span> {{client.prenom}}</h5>
-                    <h5><span class="text-success">Age :</span> {{client.age | date('d-M-Y')}}</h5>
-                    <h5><span class="text-success">Genre :</span> {{client.genre}}</h5>
+                    <h5><span class="text-success">Nom :</span> {{client.nomprenom}}</h5>
                     <h5><span class="text-success">Adresse :</span> {{client.adresse}}</h5>
                     <h5><span class="text-success">Ville :</span> {{client.ville}}</h5>
                     <h5><span class="text-success">Phone :</span> {{client.phone}}</h5>
                     <div class="mt-5">        
-                        <a href="{{path('generate_pdf',{'id':client.id})}}" class="btn btn-primary">Generate PDF</a>
+                        <a href="{{path('generate_pdf',{'id':client.id})}}" class="btn btn-primary">Imprimer devis</a>
                     </div>
                   </div>
                 </div>

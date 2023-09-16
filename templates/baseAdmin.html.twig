@@ -7,7 +7,7 @@
                     <!-- fevicon -->
         <link rel="icon" href="{{ asset('assetsA/images/logo.png')}}" type="image/gif" />
        
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %}Welcome Admin{% endblock %}</title>
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-...your-sha512-here..." crossorigin="anonymous" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" integrity="sha512-...your-sha512-here..." crossorigin="anonymous" />
@@ -279,7 +279,7 @@
                 <!-- partial:partials/_sidebar.html -->
                 <nav class="sidebar sidebar-offcanvas" id="sidebar">
                 <ul class="nav">
-                    <li class="nav-item nav-category">Main</li>
+                    <li class="nav-item nav-category">Menu</li>
                     <li class="nav-item">
                     <a class="nav-link" href="{{path('app_admin')}}">
                         <span class="icon-bg"><i class="mdi mdi-cube menu-icon"></i></span>
@@ -312,13 +312,13 @@
                         <span class="menu-title">Stock</span>
                     </a>
                     </li>
-                    {# <li class="nav-item">
-                        <a class="nav-link" href="pages/charts/chartjs.html">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{path('app_liste_commandes')}}">
                             <span class="icon-bg"><i class="mdi mdi-chart-bar menu-icon"></i></span>
-                            <span class="menu-title">Charts</span>
+                            <span class="menu-title">Liste des commandes</span>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    {# <li class="nav-item">
                         <a class="nav-link" href="pages/tables/basic-table.html">
                             <span class="icon-bg"><i class="mdi mdi-table-large menu-icon"></i></span>
                             <span class="menu-title">Tables</span>

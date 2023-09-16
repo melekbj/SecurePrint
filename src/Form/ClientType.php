@@ -15,27 +15,7 @@ class ClientType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nom')
-            ->add('prenom')
-            ->add('genre', ChoiceType::class, [
-                'required' => true,
-                'multiple' => false,
-                'expanded' => false,
-                'placeholder' => 'Choisir sexe',
-                'choices'  => [
-                    'Homme' => 'Homme',
-                    'Femme' => 'Femme',
-                    'Autre' => 'Autre',
-                ],
-            ])
-            ->add('age', DateType::class, [
-                'widget' => 'single_text',
-                'label' => 'Date de naissance',
-                'attr' => [
-                    'class' => 'form-control',
-                    'placeholder' => 'Age',
-                ],
-            ])
+            ->add('nom_prenom')
             ->add('adresse')
             ->add('ville', ChoiceType::class, [
                 'required' => true,

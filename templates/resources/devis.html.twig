@@ -15,9 +15,9 @@
 			<div>
 				<h1 style="font-size:50px;" class=" text-center text-info">Devis</h1>
 			</div>
-			<div>
+			{# <div>
 				<img style="float:right;margin-top:-45px;" src="https://127.0.0.1:8000/assets/img/logo.png" width="200" alt="Your Image">
-			</div>
+			</div> #}
 		</div>
 
 
@@ -26,38 +26,89 @@
 		<br>
 		Tunis : 17/20/30 <br>
 
-		
 
+		<div style="display: inline-block; margin-right: 20px;">
+			<table border="1" cellpadding="5" cellspacing="0">
+				<tr>
+					<td>{{app.user.fullname}}</td>
+				</tr>
+				<tr>
+					<td>{{app.user.poste}}</td>
+				</tr>
+				<tr>
+					<td>{{app.user.email}}</td>
+				</tr>
+				<tr>
+					<td>MF : {{app.user.mf}}</td>
+				</tr>
+			</table>
+		</div>
 
+		<div style="display: inline-block;">
+			<table border="1" cellpadding="5" cellspacing="0">
+				<tr>
 
+					<td>Client : {{ client.nomprenom }}</td>
+				</tr>
 
+			</table>
+		</div>
+		<br><br><br>
+		<div style="display: inline-block; margin-right: 20px;">
+			<table border="1" cellpadding="5" cellspacing="0">
+				<thead>
+					<tr>
+						<th>
+							Code
+						</th>
+						<th>
+							Désignation
+						</th>
+						<th>
+							Quantite
+						</th>
+						<th>
+							PU.H.T
+						</th>
+						<th>
+							TTVA</th>
+						<th>
+							REMISE</th>
+						<th>
+							TIMBRE</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for c in commandes %}
 
-					<div style="display: inline-block; margin-right: 20px;">
-    <table border="1" cellpadding="5" cellspacing="0">
-        <tr>
-            <td>{{app.user.fullname}}</td>
-        </tr>
-        <tr>
-            <td>{{app.user.poste}}</td>
-        </tr>
-        <tr>
-            <td>{{app.user.email}}</td>
-        </tr>
-        <tr>
-            <td>MF : {{app.user.mf}}</td>
-        </tr>
-    </table>
-</div>
+						<tr>
+							<td>
+								{{c.code}}
+							</td>
+							<td>
+								{{c.designation}}
+							</td>
+							<td>
+								{{c.qte}}
+							</td>
+							<td>
+								{{c.puht}}
+							</td>
+							<td>
+								{{c.ttva}}
+							</td>
+							<td>
+								{{c.remise}}
+							</td>
+							<td>
+								{{c.timbre}}
+							</td>
+						</tr>
 
-<div style="display: inline-block;">
-    <table border="1" cellpadding="5" cellspacing="0">
-        <tr>
-            
-            <td>Client : {{ client.nom }}</td>
-        </tr>
-        
-    </table>
-</div>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
 
 
 
