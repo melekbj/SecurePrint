@@ -6,6 +6,7 @@ use App\Repository\CommandeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: CommandeRepository::class)]
 class Commande
@@ -35,6 +36,9 @@ class Commande
 
     #[ORM\Column(nullable: true)]
     private ?float $timbre = 0;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $date = null;
 
     #[ORM\ManyToOne(inversedBy: 'commandes')]
     private ?Clients $client = null;
@@ -132,6 +136,18 @@ class Commande
     public function setTimbre(?float $timbre): self
     {
         $this->timbre = $timbre;
+
+        return $this;
+    }
+
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->date;
+    }
+
+    public function setDate(\DateTimeInterface $date): static
+    {
+        $this->date = $date;
 
         return $this;
     }

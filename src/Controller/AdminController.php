@@ -292,6 +292,8 @@ public function ajoutCommande(Request $request, PersistenceManagerRegistry $doct
         $commande->setTtva($formData['ttva']);
         $commande->setRemise($formData['remise']);
         $commande->setTimbre($formData['timbre']);
+        $commande->setDate(new \DateTime($formData['date']));
+        
 
         // Get the Client entity from the form data
         $clientId = $formData['client'];
@@ -316,7 +318,7 @@ public function ajoutCommande(Request $request, PersistenceManagerRegistry $doct
         $entityManager->persist($commandeMateriel);
 
         $entityManager->flush();
-        $this->addFlash('success', 'Commande and CommandeMateriel added successfully');
+        $this->addFlash('success', 'Commande added successfully');
         return $this->redirectToRoute('app_liste_commandes');
     }
     return $this->render('admin/commandes/ajoutCommande.html.twig', [
