@@ -277,7 +277,7 @@ class AdminController extends AbstractController
 
 
     
-    //generate addCommande function
+    
     #[Route('/liste_commande', name: 'app_liste_commandes')]
     public function addCommande(PersistenceManagerRegistry $doctrine, Request $request): Response
     {
@@ -287,6 +287,16 @@ class AdminController extends AbstractController
 
         return $this->render('admin/commandes/listeCommandes.html.twig', [ 
             'commandes' => $commandes,
+        ]);
+    }
+
+
+    #[Route('/detail_commande/{id}', name: 'app_detail_commande')]
+    public function detailCommande($id, CommandeRepository $rep): Response
+    {
+        $commande = $rep->find($id);
+        return $this->render('admin/commandes/detailCommande.html.twig', [
+            'commande' => $commande,
         ]);
     }
 
@@ -306,9 +316,8 @@ class AdminController extends AbstractController
             // Create a new Commande entity and set its properties
             $commande = new Commande();
             $commande->setCode($formData['code']);
-            // $commande->setPuht($formData['puht']);
-            $commande->setTtva($formData['ttva']);
             $commande->setRemise($formData['remise']);
+            $commande->setTimbre($formData['timbre']);
             $commande->setDate(new \DateTime($formData['date']));
             
 
@@ -325,6 +334,7 @@ class AdminController extends AbstractController
             $materielIds = $formData['materiel'];
             $quantities = $formData['quantity'];
             $prices = $formData['price'];
+            $tva = $formData['tva'];
 
             foreach ($materielIds as $index => $materielId) {
                 $materiel = $doctrine->getRepository(Materiel::class)->find($materielId);
@@ -335,8 +345,7 @@ class AdminController extends AbstractController
                 $commandeMateriel->setMateriel($materiel);
                 $commandeMateriel->setQte($quantities[$index]);
                 $commandeMateriel->setPrix($prices[$index]);
-
-                // Set other properties of CommandeMateriel as needed
+                $commandeMateriel->setTva($tva[$index]);
     
                 // Persist the CommandeMateriel entity
                 $entityManager->persist($commandeMateriel);

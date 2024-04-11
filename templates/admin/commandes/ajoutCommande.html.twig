@@ -38,12 +38,12 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4">
+                            {# <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="ttva">TTVA:</label>
-                                    <input type="number" step="0.01" class="form-control" id="ttva" name="ttva" required>
+                                    <label for="tva">TVA:</label>
+                                    <input type="number" step="0.01" class="form-control" id="tva" name="tva" required>
                                 </div>
-                            </div>
+                            </div> #}
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="remise">Remise:</label>
@@ -58,12 +58,12 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="materiel">Materiel:</label>
                                     <div id="materielContainer">
                                         <div class="materielSelectContainer row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
                                                 <select class="form-control materielSelect" name="materiel[]" required>
                                                     <option value="">Choisir un materiel</option>
                                                     {% for materiel in materiels %}
@@ -71,11 +71,14 @@
                                                     {% endfor %}
                                                 </select>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
                                                 <input type="number" class="form-control quantityInput" name="quantity[]" placeholder="Quantity" required>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
                                                 <input type="number" class="form-control priceInput" name="price[]" placeholder="Prix" required>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <input type="number" class="form-control tvaInput" name="tva[]" placeholder="TVA" required>
                                             </div>
                                         </div>
                                     </div>
@@ -84,6 +87,7 @@
                                 </div>
                             </div>
                         </div>
+
 
                         <div class="row">
                             <div class="col-md-12 mt-5">
@@ -134,6 +138,10 @@ document.getElementById('addMateriel').addEventListener('click', function() {
     var newPriceInput = newSelectContainer.querySelector('.priceInput');
     newPriceInput.value = "";
 
+    // Create a new TVA input and set its attributes
+    var newTvaInput = newSelectContainer.querySelector('.tvaInput');
+    newTvaInput.value = "";
+
     // Append the new select container to the materiel container
     document.getElementById('materielContainer').appendChild(newSelectContainer);
 });
@@ -147,6 +155,7 @@ document.getElementById('removeMateriel').addEventListener('click', function() {
         selectContainers[selectContainers.length - 1].remove();
     }
 });
+
 </script>
 
 

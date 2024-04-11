@@ -23,7 +23,10 @@ class Commande
     private ?float $ttva = null;
 
     #[ORM\Column(nullable: true)]
-    private ?float $remise = null;
+    private ?float $remise = 0;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $timbre = 0;
 
     
 
@@ -79,6 +82,18 @@ class Commande
     public function setRemise(?float $remise): self
     {
         $this->remise = $remise;
+
+        return $this;
+    }
+
+    public function getTimbre(): ?float
+    {
+        return $this->timbre;
+    }
+
+    public function setTimbre(?float $timbre): self
+    {
+        $this->timbre = $timbre;
 
         return $this;
     }

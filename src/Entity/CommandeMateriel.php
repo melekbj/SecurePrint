@@ -23,10 +23,7 @@ class CommandeMateriel
     private ?float $prix = null;
 
     #[ORM\Column(nullable: true)]
-    private ?float $remise = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?float $timbre = 0;
+    private ?float $tva = null;
 
     #[ORM\Column]
     private ?int $qte = null;
@@ -72,29 +69,19 @@ class CommandeMateriel
         return $this;
     }
 
-    public function getRemise(): ?float
+    public function getTva(): ?float
     {
-        return $this->remise;
+        return $this->tva;
     }
 
-    public function setRemise(?float $remise): self
+    public function setTva(?float $tva): self
     {
-        $this->remise = $remise;
+        $this->tva = $tva;
 
         return $this;
     }
 
-    public function getTimbre(): ?float
-    {
-        return $this->timbre;
-    }
-
-    public function setTimbre(?float $timbre): self
-    {
-        $this->timbre = $timbre;
-
-        return $this;
-    }
+    
 
     public function getQte(): ?int
     {

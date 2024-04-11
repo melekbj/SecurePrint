@@ -23,9 +23,9 @@
 
 		<br>
 		
-			<h3> <strong>Devis No : {{ commande.code }}</strong></h3>
+			<h3> <strong>Devis No. {{ commande.code }}</strong></h3>
 			{# Add other properties of commande here if needed #}
-			<h3 class="mt-2"> <strong>Tunis : 17/20/30</strong> </h3>
+			<h3 class="mt-2"> <strong>Tunis &nbsp; : &nbsp; {{commande.date | date('d/m/Y') }}</strong> </h3>
 		
 		<br>
 
@@ -66,13 +66,13 @@
 					<tr>
 							<th>Client</th>
 							<th>Code</th>
-							<th>Materiel</th>
-							<th>Quantite</th>
+							<th>Désignation</th>
+							<th>Qte</th>
 							<th>PU.H.T</th>
 							<th>TTVA</th>
 							<th>REMISE</th>
 							<th>TIMBRE</th>
-							<th>Date</th>
+							{# <th>Date</th> #}
 					</tr>
 				</thead>
 				<tbody>
@@ -93,7 +93,7 @@
 										<td rowspan="{{ numRows }}">{{ item.ttva }}</td>
 										<td rowspan="{{ numRows }}">{{ item.remise }}</td>
 										<td rowspan="{{ numRows }}">{{ commande_materiel.timbre }}</td>
-										<td rowspan="{{ numRows }}">{{ item.date | date('d-m-Y') }}</td>  
+										{# <td rowspan="{{ numRows }}">{{ item.date | date('d-m-Y') }}</td>   #}
 									{% endif %}
 
 								</tr>
