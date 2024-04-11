@@ -19,14 +19,14 @@ class Commande
     #[ORM\Column(length: 255)]
     private ?string $code = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(nullable: true, options:["default" => 0])]
     private ?float $ttva = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?float $remise = 0;
+    #[ORM\Column(nullable: true, options:["default" => 0])]
+    private ?float $remise = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?float $timbre = 0;
+    #[ORM\Column(nullable: true, options:["default" => 0])]
+    private ?float $timbre = null;
 
     
 

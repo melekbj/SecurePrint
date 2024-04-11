@@ -22,11 +22,14 @@ class CommandeMateriel
     #[ORM\Column(nullable: true)]
     private ?float $prix = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(nullable: true, options:["default" => 0])]
     private ?float $tva = null;
 
     #[ORM\Column]
     private ?int $qte = null;
+
+    #[ORM\Column(nullable: true, options:["default" => 0])]
+    private ?float $remise = null;
 
     public function getId(): ?int
     {
@@ -82,7 +85,6 @@ class CommandeMateriel
     }
 
     
-
     public function getQte(): ?int
     {
         return $this->qte;
@@ -91,6 +93,18 @@ class CommandeMateriel
     public function setQte(int $qte): self
     {
         $this->qte = $qte;
+
+        return $this;
+    }
+
+    public function getRemise(): ?float
+    {
+        return $this->remise;
+    }
+
+    public function setRemise(?float $remise): self
+    {
+        $this->remise = $remise;
 
         return $this;
     }

@@ -30,7 +30,7 @@
                                 <th>REMISE</th>
                                 <th>TIMBRE</th>
                                 <th>Date</th>
-                                <th>Actions</th>
+                                <th class=" text-center" colspan="2">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -51,8 +51,11 @@
                                             
                                             <td rowspan="{{ numRows }}">{{ item.ttva }}</td>
                                             <td rowspan="{{ numRows }}">{{ item.remise }}</td>
-                                            <td rowspan="{{ numRows }}">{{ commande_materiel.timbre }}</td>
+                                            <td rowspan="{{ numRows }}">{{ item.timbre }}</td>
                                             <td rowspan="{{ numRows }}">{{ item.date | date('d-m-Y') }}</td>
+                                            <td rowspan="{{ numRows }}">
+                                                <li><a type="submit" class="btn btn-info" href="{{path('app_detail_commande',{'id':item.id})}}"> Detail commande</a></li>
+                                            </td>
                                             <td rowspan="{{ numRows }}">
                                                 <div class="dropdown">
                                                     <a class="dropdown-toggle" href="#" role="button" id="actionsDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

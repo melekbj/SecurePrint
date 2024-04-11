@@ -316,7 +316,7 @@ class AdminController extends AbstractController
             // Create a new Commande entity and set its properties
             $commande = new Commande();
             $commande->setCode($formData['code']);
-            $commande->setRemise($formData['remise']);
+            $commande->setTtva($formData['ttva']);
             $commande->setTimbre($formData['timbre']);
             $commande->setDate(new \DateTime($formData['date']));
             
@@ -335,6 +335,7 @@ class AdminController extends AbstractController
             $quantities = $formData['quantity'];
             $prices = $formData['price'];
             $tva = $formData['tva'];
+            $remise = $formData['remise'];
 
             foreach ($materielIds as $index => $materielId) {
                 $materiel = $doctrine->getRepository(Materiel::class)->find($materielId);
@@ -346,6 +347,7 @@ class AdminController extends AbstractController
                 $commandeMateriel->setQte($quantities[$index]);
                 $commandeMateriel->setPrix($prices[$index]);
                 $commandeMateriel->setTva($tva[$index]);
+                $commandeMateriel->setRemise($remise[$index]);
     
                 // Persist the CommandeMateriel entity
                 $entityManager->persist($commandeMateriel);

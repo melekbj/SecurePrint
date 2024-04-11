@@ -38,18 +38,18 @@
                             </div>
                         </div>
                         <div class="row">
-                            {# <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="tva">TVA:</label>
-                                    <input type="number" step="0.01" class="form-control" id="tva" name="tva" required>
-                                </div>
-                            </div> #}
                             <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="ttva">Taux TVA (%):</label>
+                                    <input type="number" step="0.01" class="form-control" id="ttva" name="ttva" required>
+                                </div>
+                            </div>
+                            {# <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="remise">Remise:</label>
                                     <input type="number" step="0.01" class="form-control" id="remise" name="remise" required>
                                 </div>
-                            </div>
+                            </div> #}
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="timbre">Timbre:</label>
@@ -63,7 +63,7 @@
                                     <label for="materiel">Materiel:</label>
                                     <div id="materielContainer">
                                         <div class="materielSelectContainer row">
-                                            <div class="col-md-3">
+                                            <div class="col-md-4">
                                                 <select class="form-control materielSelect" name="materiel[]" required>
                                                     <option value="">Choisir un materiel</option>
                                                     {% for materiel in materiels %}
@@ -71,14 +71,17 @@
                                                     {% endfor %}
                                                 </select>
                                             </div>
-                                            <div class="col-md-3">
-                                                <input type="number" class="form-control quantityInput" name="quantity[]" placeholder="Quantity" required>
+                                            <div class="col-md-2">
+                                                <input type="number" class="form-control quantityInput" name="quantity[]" placeholder="Qte" min="0" required>
                                             </div>
-                                            <div class="col-md-3">
-                                                <input type="number" class="form-control priceInput" name="price[]" placeholder="Prix" required>
+                                            <div class="col-md-2">
+                                                <input type="number" class="form-control priceInput" name="price[]" placeholder="Prix" min="0" required>
                                             </div>
-                                            <div class="col-md-3">
-                                                <input type="number" class="form-control tvaInput" name="tva[]" placeholder="TVA" required>
+                                            <div class="col-md-2">
+                                                <input type="number" class="form-control tvaInput" name="tva[]" placeholder="TVA" min="0" required>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input type="number" class="form-control remiseInput" name="remise[]" placeholder="Remise" min="0" required>
                                             </div>
                                         </div>
                                     </div>
@@ -87,6 +90,7 @@
                                 </div>
                             </div>
                         </div>
+
 
 
                         <div class="row">
@@ -142,6 +146,10 @@ document.getElementById('addMateriel').addEventListener('click', function() {
     var newTvaInput = newSelectContainer.querySelector('.tvaInput');
     newTvaInput.value = "";
 
+    // Create a new Remise input and set its attributes
+    var newRemiseInput = newSelectContainer.querySelector('.remiseInput');
+    newRemiseInput.value = "";
+
     // Append the new select container to the materiel container
     document.getElementById('materielContainer').appendChild(newSelectContainer);
 });
@@ -155,6 +163,7 @@ document.getElementById('removeMateriel').addEventListener('click', function() {
         selectContainers[selectContainers.length - 1].remove();
     }
 });
+
 
 </script>
 
