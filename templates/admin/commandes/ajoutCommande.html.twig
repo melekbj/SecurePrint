@@ -10,13 +10,19 @@
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title">Ajouter commande</h4>
-                    
+
+                    {% for message in app.flashes('error') %}
+                        <div class="alert alert-danger">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+
                     <form action="" method="post" id="commandForm">
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="code">Code:</label>
-                                    <input type="text" class="form-control" id="code" name="code" required>
+                                    <input type="text" class="form-control" id="code" name="code" required unique>
                                 </div>
                             </div>
                             <div class="col-md-4">

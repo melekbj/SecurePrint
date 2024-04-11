@@ -5,12 +5,9 @@
    <div class="container-scroller">
     <div class="container-fluid page-body-wrapper">
         <div class="main-panel col-lg-12">
-            <div class="d-flex justify-content-end">
-                {# <a class="btn btn-primary" href="{{path('app_ajout_commande')}}">Ajouter commande +</a> #}
-            </div>
             <div class="content-wrapper">
                 <h3 class="text-center text-github font-weight-bold my-4">Informations detaille sur la commande N. {{commande.code}} </h3>
-
+                <h5 class=" text-github"> Date : {{ commande.date | date('d/m/Y') }}</h5>
                 {% for message in app.flashes('success') %}
                     <div class="alert alert-success">
                         {{ message }}
@@ -26,64 +23,101 @@
                                 <th>Désignation</th>
                                 <th>Qte</th>
                                 <th>PU.H.T</th>
-                                <th>TTVA</th>
-                                <th>REMISE</th>
-                                <th>TIMBRE</th>
-                                <th>Date</th>
+                                <th>R%</th>
+                                <th>TVA</th>
+                                <th>T.TC</th>
+                                
                             </tr>
                         </thead>
                         <tbody>
                             {% set item = commande %} {# assuming 'commande' is the specific command passed from the detailCommande function #}
                             {% set numRows = item.commandemateriels|length %}
+
+                            {% set totalHT = 0 %}
+                            {% set totalRemise = 0 %}
+                            {% set totalTVA = 0 %}
+
                             {% for commande_materiel in item.commandemateriels %}
                                 <tr>
                                     {% if loop.first %}
                                         <td rowspan="{{ numRows }}">{{ item.client.nomprenom }}</td>
                                         <td rowspan="{{ numRows }}">{{ item.code }}</td>
+                                        
                                     {% endif %}
 
                                     <td>{{ commande_materiel.materiel.nom }}</td>
                                     <td>{{ commande_materiel.qte }}</td>
                                     <td>{{ commande_materiel.prix }}</td>
+                                    <td>{{ commande_materiel.remise }}</td>
                                     <td>{{ commande_materiel.tva }}</td>
+                                    <td>{{ commande_materiel.prix + commande_materiel.tva }}</td>
                                     
-                                    {% if loop.first %}
-                                        <td rowspan="{{ numRows }}">{{ item.remise }}</td>
-                                        <td rowspan="{{ numRows }}">{{ item.timbre }}</td>
-                                        <td rowspan="{{ numRows }}">{{ item.date | date('d-m-Y') }}</td>   
-                                    {% endif %}
 
                                 </tr>
+
+                                {% set totalHT = totalHT + commande_materiel.prix + commande_materiel.tva %}
+                                {% set totalRemise = totalRemise + commande_materiel.remise %}
+                                {% set totalTVA = totalTVA + commande_materiel.tva %}
+
                             {% endfor %}
+
+                            {% set totalTTC = totalHT + totalRemise + totalTVA + commande.timbre %}
+
                             <tr style="border-bottom: 2px solid black;"></tr>
                         </tbody>
 
                     </table>
 
 
-<br> <br>
 
-                     <table class="table table-striped table-bordered">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th>TVA %</th>
-                                <th>Montant TVA</th>
-                                <th>Total H.T</th>
-                                <th>Total Remise</th>
-                                <th>PU.H.T</th>
-                                <th>Total TVA</th>
-                                <th>TIMBRE</th>
-                                <th>Total TTC</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+
+                    {% set montantTVA = totalHT * (commande.ttva / 100) %} 
+
+                    <div class="row mt-5">
+                        <div class="col-md-6">
+                            <table class="table table-striped table-bordered">
+                                <thead class="">
+                                    <tr>
+                                        <th>TVA %</th>
+                                        <th>Montant TVA</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{ commande.ttva }}</td>
+                                        <td>{{ montantTVA }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="col-md-6">
+                            <table class="table table-striped table-bordered">
                                 <tr>
-                                    
-
+                                    <th>Total H.T</th>
+                                    <td>{{ totalHT }}</td>
                                 </tr>
-                        </tbody>
+                                <tr>
+                                    <th>Total Remise</th>
+                                    <td>{{ totalRemise }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Total TVA</th>
+                                    <td>{{ totalTVA }}</td>
+                                </tr>
+                                <tr>
+                                    <th>TIMBRE</th>
+                                    <td>{{ commande.timbre }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Total TTC</th>
+                                    <td>{{ totalTTC }}</td>
+                                </tr>
+                            </table>
 
-                    </table>
+                        </div>
+                    </div>
+
                 
 
             </div>

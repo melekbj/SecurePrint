@@ -29,7 +29,7 @@ class Materiel
     #[ORM\Column(length: 255, nullable:true)]
     private ?string $photo = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255,unique:true)]
     private ?string $reference = null;
 
     #[ORM\OneToMany(mappedBy: 'materiel', targetEntity: CommandeMateriel::class)]

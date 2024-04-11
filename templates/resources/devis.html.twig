@@ -10,16 +10,11 @@
 	</head>
 	<body>
 
-
 		<div class="row ml-5 mr-5 mb-3 justify-content-between">
 			<div>
 				<h1 style="font-size:50px;" class=" text-center text-info">Devis</h1>
 			</div>
-			{# <div>
-				<img style="float:right;margin-top:-45px;" src="https://127.0.0.1:8000/assets/img/logo.png" width="200" alt="Your Image">
-			</div> #}
 		</div>
-
 
 		<br>
 		
@@ -61,25 +56,28 @@
 		<br><br><br>
 
 		<div style="display: block;">
-			<table border="1" cellpadding="5" cellspacing="0" style="width: 100%; font-size: 1.2em;">
-				<thead class="thead-dark" style="background-color: #30C8D9; color: white;">
-					<tr>
+				<table border="1" cellpadding="5" cellspacing="0" style="width: 100%; font-size: 1.2em;">
+					<thead class="thead-dark" style="background-color: #30C8D9; color: white;">
+						<tr>
 							<th>Client</th>
 							<th>Code</th>
 							<th>Désignation</th>
 							<th>Qte</th>
 							<th>PU.H.T</th>
-							<th>TTVA</th>
-							<th>REMISE</th>
-							<th>TIMBRE</th>
-							{# <th>Date</th> #}
-					</tr>
-				</thead>
-				<tbody>
-					{% for item in commandes %}
-						{% set numRows = item.commandemateriels|length %}
-						{% for commande_materiel in item.commandemateriels %}
-							<tr style="padding: 10px;">
+							<th>R%</th>
+							<th>TVA</th>
+							<th>T.TC</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% set totalHT = 0 %}
+						{% set totalRemise = 0 %}
+						{% set totalTVA = 0 %}
+
+						{% for item in commandes %}
+							{% set numRows = item.commandemateriels|length %}
+							{% for commande_materiel in item.commandemateriels %}
+								<tr style="padding: 30px;">
 									{% if loop.first %}
 										<td rowspan="{{ numRows }}">{{ item.client.nomprenom }}</td>
 										<td rowspan="{{ numRows }}">{{ item.code }}</td>
@@ -88,22 +86,74 @@
 									<td>{{ commande_materiel.materiel.nom }}</td>
 									<td>{{ commande_materiel.qte }}</td>
 									<td>{{ commande_materiel.prix }}</td>
-
-									{% if loop.first %}
-										<td rowspan="{{ numRows }}">{{ item.ttva }}</td>
-										<td rowspan="{{ numRows }}">{{ item.remise }}</td>
-										<td rowspan="{{ numRows }}">{{ commande_materiel.timbre }}</td>
-										{# <td rowspan="{{ numRows }}">{{ item.date | date('d-m-Y') }}</td>   #}
-									{% endif %}
+									<td>{{ commande_materiel.remise }}</td>
+									<td>{{ commande_materiel.tva }}</td>
+									<td>{{ commande_materiel.prix + commande_materiel.tva }}</td>
 
 								</tr>
+
+								{% set totalHT = totalHT + commande_materiel.prix + commande_materiel.tva %}
+								{% set totalRemise = totalRemise + commande_materiel.remise %}
+								{% set totalTVA = totalTVA + commande_materiel.tva %}
+
+							{% endfor %}
 						{% endfor %}
-					{% endfor %}
-				</tbody>
-			</table>
+
+						{% set totalTTC = totalHT + totalRemise + totalTVA + commande.timbre %}
+
+						<tr style="border-bottom: 2px solid black;"></tr>
+					</tbody>
+				</table>
 		</div>
 
+				{% set montantTVA = totalHT * (commande.ttva / 100) %} 
 
+					<div style="display: inline-block; margin-right: 20px; width: 40%;">
+				
+					
+						<table class="table table-striped table-bordered">
+							<thead class="">
+								<tr>
+									<th>TVA %</th>
+									<th>Montant TVA</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>{{ commande.ttva }}</td>
+									<td>{{ montantTVA }}</td>
+								</tr>
+							</tbody>
+						</table>
+					
+					</div>
+					
+					<div class=" mt-4" style="display: inline-block; width: 55%;">
+						<table class="table table-striped table-bordered">
+							<tr>
+								<th>Total H.T</th>
+								<td>{{ totalHT }}</td>
+							</tr>
+							<tr>
+								<th>Total Remise</th>
+								<td>{{ totalRemise }}</td>
+							</tr>
+							<tr>
+								<th>Total TVA</th>
+								<td>{{ totalTVA }}</td>
+							</tr>
+							<tr>
+								<th>TIMBRE</th>
+								<td>{{ commande.timbre }}</td>
+							</tr>
+							<tr>
+								<th>Total TTC</th>
+								<td>{{ totalTTC }}</td>
+							</tr>
+						</table>
+					
+				
+					</div>
 
 	</body>
 </html>

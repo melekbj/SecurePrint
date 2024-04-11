@@ -7,8 +7,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: CommandeRepository::class)]
+#[UniqueEntity(fields: ['code'], message: 'There is already a command with this code')]
 class Commande
 {
     #[ORM\Id]
@@ -16,7 +18,7 @@ class Commande
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255,unique:true)]
     private ?string $code = null;
 
     #[ORM\Column(nullable: true, options:["default" => 0])]

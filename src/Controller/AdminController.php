@@ -313,6 +313,16 @@ class AdminController extends AbstractController
             // Get the submitted data
             $formData = $request->request->all();
 
+            // Check if a Commande with the same code already exists
+        $existingCommande = $doctrine->getRepository(Commande::class)->findOneBy(['code' => $formData['code']]);
+        if ($existingCommande) {
+            $this->addFlash('error', 'There is already a command with this code');
+            return $this->render('admin/commandes/ajoutCommande.html.twig', [
+                'clients' => $clients,
+                'materiels' => $materiels,
+            ]);
+        }
+
             // Create a new Commande entity and set its properties
             $commande = new Commande();
             $commande->setCode($formData['code']);
