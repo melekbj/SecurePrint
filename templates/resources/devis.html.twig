@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Devis</title>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+	</head>
+	<body>
+
+
+		<div class="row ml-5 mr-5 mb-3 justify-content-between">
+			<div>
+				<h1 style="font-size:50px;" class=" text-center text-info">Devis</h1>
+			</div>
+			{# <div>
+				<img style="float:right;margin-top:-45px;" src="https://127.0.0.1:8000/assets/img/logo.png" width="200" alt="Your Image">
+			</div> #}
+		</div>
+
+
+		<br>
+		
+			Devis No : {{ commande.id }}
+			{# Add other properties of commande here if needed #}
+		
+		<br>
+		Tunis : 17/20/30 <br>
+
+
+		<div style="display: inline-block; margin-right: 20px;">
+			<table border="1" cellpadding="5" cellspacing="0">
+				<tr>
+					<td>{{app.user.fullname}}</td>
+				</tr>
+				<tr>
+					<td>{{app.user.poste}}</td>
+				</tr>
+				<tr>
+					<td>{{app.user.email}}</td>
+				</tr>
+				<tr>
+					<td>MF : {{app.user.mf}}</td>
+				</tr>
+			</table>
+		</div>
+
+		<div style="display: inline-block;">
+			<table border="1" cellpadding="5" cellspacing="0">
+				<tr>
+
+					<td>Client : {{ client.nomprenom }}</td>
+				</tr>
+
+			</table>
+		</div>
+		<br><br><br>
+		<div style="display: inline-block; margin-right: 20px;">
+			<table border="1" cellpadding="5" cellspacing="0">
+				<thead>
+					<tr>
+						<th>
+							Code
+						</th>
+						<th>
+							Désignation
+						</th>
+						<th>
+							Quantite
+						</th>
+						<th>
+							PU.H.T
+						</th>
+						<th>
+							TTVA</th>
+						<th>
+							REMISE</th>
+						<th>
+							TIMBRE</th>
+					</tr>
+				</thead>
+				<tbody>
+					
+
+						<tr>
+							<td>
+								{{commande.code}}
+							</td>
+							<td>
+								{{commande.designation}}
+							</td>
+							<td>
+								{{commande.qte}}
+							</td>
+							<td>
+								{{commande.puht}}
+							</td>
+							<td>
+								{{commande.ttva}}
+							</td>
+							<td>
+								{{commande.remise}}
+							</td>
+							<td>
+								{{commande.timbre}}
+							</td>
+						</tr>
+
+					
+				</tbody>
+			</table>
+		</div>
+
+
+
+
+
+
+
+
+	</body>
+</html>

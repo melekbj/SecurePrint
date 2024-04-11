@@ -1,0 +1,108 @@
+{% extends 'baseAdmin.html.twig' %}
+
+{% block body %}
+   <div class="container-scroller">
+      <div class="container-fluid page-body-wrapper ">
+        <div class="main-panel col-lg-12">
+        <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-primary btn-fw col-lg-1 float-right" data-toggle="modal" data-target="#SignIn">Ajouter materiel +</button>
+        </div>
+          <div class="content-wrapper">
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                <div class="card-header">
+                      <h5 class="card-title text-center">Liste des materiels</h5>
+                    </div>
+                  <div class="card-body">
+                    </p>
+                    {% for message in app.flashes('success') %}
+                        <div class="alert alert-success">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th> Photo </th>
+                          <th> Nom </th>
+                          <th> Référence </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {% for m in materiels %}
+                        
+                        <tr>
+                          {% if m.photo %}
+                            {% set imageUrl = vich_uploader_asset(m, 'imageFile') %}
+                            <td class="py-1"><img style="width:60px;height:50px;" src="{{ asset(imageUrl) }}" alt="image" /></td>
+                          {% endif %}
+                          <td> {{m.nom}} </td>
+                          <td> {{m.reference}} </td>
+                          <td>
+                            <div class="dropdown">
+                              <a class="dropdown-toggle" href="#" role="button" id="actionsDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v"></i>
+                              </a>
+                              <ul class="dropdown-menu" aria-labelledby="actionsDropdown">
+                                <li><a type="submit" class="dropdown-item" href="{{path('app_update_materiel',{'id':m.id})}}"><i class="fas fa-edit"></i> Edit</a></li>
+                                <li><a onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce matériel ?')" type="submit" class="dropdown-item" href="{{path('app_delete_materiel',{'id':m.id})}}"><i class="fas fa-trash-alt"></i> Delete</a></li>
+                              </ul>
+                            </div>
+                          </td>
+                        </tr>
+
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+          <!-- content-wrapper ends -->
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+
+
+<!-- Button trigger modal -->
+
+<!-- Modal -->
+<div class="modal fade" id="SignIn" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Ajouter nouveau materiel</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{ form_start(addMateriel, {'attr': {'novalidate': 'novalidate'}}) }}
+        <div class="mb-2">
+            {{ form_widget(addMateriel.nom, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
+        </div>
+        <div class="mb-2">
+            {{ form_widget(addMateriel.imageFile, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class="mb-2">
+            {{ form_widget(addMateriel.reference, {'attr': {'class': 'form-control', 'placeholder': 'Reference'}}) }}
+        </div>
+        
+      </div>
+      <div class="modal-footer">
+        {{ form_widget(addMateriel.save, {'label': 'Add new +', 'attr': {'class': 'btn btn-primary'}}) }}
+        {{ form_end(addMateriel)}}
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+
+
+
+
+
+
+{% endblock %}

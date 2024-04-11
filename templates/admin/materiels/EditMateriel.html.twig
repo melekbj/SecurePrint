@@ -1,0 +1,76 @@
+{% extends 'baseAdmin.html.twig' %}
+
+{% block body %}
+   <div class="container-scroller">
+      <div class="container-fluid page-body-wrapper ">
+        <div class="main-panel col-lg-12">
+        <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-primary btn-fw col-lg-1 float-right" data-toggle="modal" data-target="#SignIn">Add Client +</button>
+        </div>
+          <div class="content-wrapper">
+             <div class="col-12 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Modifier materiel</h4>
+                    {# <form class="forms-sample"> #}
+                     {{ form_start(form, {'attr': {'novalidate': 'novalidate','class': 'forms-sample'}}) }}
+                      <div class="form-group">
+                        <label for="exampleInputName1">Nom</label>
+                        {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputEmail3">Photo</label>
+                        {{ form_widget(form.imageFile, {'attr': {'class': 'form-control'}}) }}
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputPassword4">Reference</label>
+                        {{ form_widget(form.reference, {'attr': {'class': 'form-control'}}) }}
+                      </div>
+
+                      {{ form_widget(form.save, {'label': 'Confirmer', 'attr': {'class': 'btn btn-primary mr-2'}}) }}
+
+                    {{ form_end(form, {'attr': {'novalidate': 'novalidate','class': 'forms-sample'}}) }}
+
+                      {# <div class="form-group">
+                        <label>File upload</label>
+                        <input type="file" name="img[]" class="file-upload-default">
+                        <div class="input-group col-xs-12">
+                          <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image">
+                          <span class="input-group-append">
+                            <button class="file-upload-browse btn btn-primary" type="button">Upload</button>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputCity1">City</label>
+                        <input type="text" class="form-control" id="exampleInputCity1" placeholder="Location">
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleTextarea1">Textarea</label>
+                        <textarea class="form-control" id="exampleTextarea1" rows="4"></textarea>
+                      </div> #}
+                      {# <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                      <button class="btn btn-light">Cancel</button> #}
+                    {# </form> #}
+                  </div>
+                </div>
+              </div>
+          <!-- content-wrapper ends -->
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+
+
+<!-- Button trigger modal -->
+
+    
+
+
+
+
+
+
+
+{% endblock %}

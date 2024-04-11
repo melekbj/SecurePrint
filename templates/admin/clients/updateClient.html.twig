@@ -1,0 +1,40 @@
+{% extends "baseAdmin.html.twig" %}
+
+
+
+{% block body %}
+
+
+<div class="container">
+
+{{ form_start(editForm) }}
+        <div class="mb-2">
+            {{ form_widget(editForm.nom_prenom, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
+        </div>
+        <div class="mb-2">
+            {{ form_widget(editForm.adresse, {'attr': {'class': 'form-control', 'placeholder': 'Adresse'}}) }}
+        </div>
+        <div class="mb-2">
+            {{ form_widget(editForm.ville, {'attr': {'class': 'form-control', 'placeholder': 'Ville'}}) }}
+        </div>
+        <div>
+            {{ form_widget(editForm.phone, {'attr': {'class': 'form-control', 'placeholder': 'Phone'}}) }}
+        </div>
+        
+      </div>
+      <div class="modal-footer">
+        {{ form_widget(editForm.save, {'label': 'Confirmer', 'attr': {'class': 'btn btn-primary'}}) }}
+        {{ form_end(editForm)}}
+
+
+
+
+
+
+</div>
+
+
+
+
+
+{% endblock %}
