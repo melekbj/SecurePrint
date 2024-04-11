@@ -240,6 +240,8 @@ class AdminController extends AbstractController
             throw $this->createNotFoundException('Client not found with ID: ' . $clientId);
         }
 
+        $commandes = $entityManager->getRepository(Commande::class)->findAll();
+
         // Fetch the specific command associated with the client
         $commandeRepository = $entityManager->getRepository(Commande::class);
         $commande = $commandeRepository->findOneBy(['id' => $commandId, 'client' => $client]);
@@ -256,6 +258,7 @@ class AdminController extends AbstractController
         $html = $this->renderView('/resources/devis.html.twig', [
             'client' => $client,
             'commande' => $commande,
+            'commandes' => $commandes,
             'commandeMateriels' => $commandeMateriels,
         ]);
 
@@ -281,16 +284,9 @@ class AdminController extends AbstractController
         $em = $doctrine->getManager();
         $commandes = $em->getRepository(Commande::class)->findAll();
 
-        // Fetch the CommandeMateriel entities associated with each Commande
-        $commandeMaterielRepository = $em->getRepository(CommandeMateriel::class);
-        $commandeMateriels = [];
-        foreach ($commandes as $commande) {
-            $commandeMateriels[$commande->getId()] = $commandeMaterielRepository->findBy(['commande' => $commande]);
-        }
 
-        return $this->render('admin/commandes/listeCommandes.html.twig', [
+        return $this->render('admin/commandes/listeCommandes.html.twig', [ 
             'commandes' => $commandes,
-            'commandeMateriels' => $commandeMateriels,
         ]);
     }
 
@@ -310,11 +306,9 @@ class AdminController extends AbstractController
             // Create a new Commande entity and set its properties
             $commande = new Commande();
             $commande->setCode($formData['code']);
-            $commande->setQte($formData['qte']);
-            $commande->setPuht($formData['puht']);
+            // $commande->setPuht($formData['puht']);
             $commande->setTtva($formData['ttva']);
             $commande->setRemise($formData['remise']);
-            $commande->setTimbre($formData['timbre']);
             $commande->setDate(new \DateTime($formData['date']));
             
 
@@ -328,17 +322,25 @@ class AdminController extends AbstractController
             $entityManager->persist($commande);
 
             // Get the Materiel entity from the form data
-            $materielId = $formData['materiel'];
-            $materiel = $doctrine->getRepository(Materiel::class)->find($materielId);
+            $materielIds = $formData['materiel'];
+            $quantities = $formData['quantity'];
+            $prices = $formData['price'];
 
-            // Create a new CommandeMateriel entity and set its properties
-            $commandeMateriel = new CommandeMateriel();
-            $commandeMateriel->setCommande($commande);
-            $commandeMateriel->setMateriel($materiel);
-            // Set other properties of CommandeMateriel as needed
+            foreach ($materielIds as $index => $materielId) {
+                $materiel = $doctrine->getRepository(Materiel::class)->find($materielId);
+    
+                // Create a new CommandeMateriel entity and set its properties
+                $commandeMateriel = new CommandeMateriel();
+                $commandeMateriel->setCommande($commande);
+                $commandeMateriel->setMateriel($materiel);
+                $commandeMateriel->setQte($quantities[$index]);
+                $commandeMateriel->setPrix($prices[$index]);
 
-            // Persist the CommandeMateriel entity
-            $entityManager->persist($commandeMateriel);
+                // Set other properties of CommandeMateriel as needed
+    
+                // Persist the CommandeMateriel entity
+                $entityManager->persist($commandeMateriel);
+            }
 
             $entityManager->flush();
             $this->addFlash('success', 'Commande added successfully');
@@ -352,24 +354,32 @@ class AdminController extends AbstractController
     }
 
 
-
-
-    //generate deleteCommande function
     #[Route('/delete_commande/{id}', name: 'app_delete_commande')]
-    public function deleteCommande($id, CommandeRepository $rep, PersistenceManagerRegistry $doctrine ): Response
+    public function deleteCommande($id, CommandeRepository $rep, PersistenceManagerRegistry $doctrine): Response
     {
+        $entityManager = $doctrine->getManager();
+        $commande = $rep->find($id);
 
-        //recuperer la classe a supprimer
-        $commandes = $rep->find($id);
-        $rep=$doctrine->getManager();
-        //supprimer la classe        
-        $rep->remove($commandes);
-        $rep->flush();
-        //flash message
+        // Check if the commande exists
+        if (!$commande) {
+            throw $this->createNotFoundException('No commande found for id '.$id);
+        }
+
+        // Remove associated CommandeMateriel entities
+        foreach ($commande->getCommandeMateriels() as $commandeMateriel) {
+            $entityManager->remove($commandeMateriel);
+        }
+
+        // Now remove the Commande entity
+        $entityManager->remove($commande);
+        $entityManager->flush();
+
+        // Flash message
         $this->addFlash('success', 'Commande removed!');
-        return $this->redirectToRoute('app_liste_commandes'); 
-        
-    }   
+        return $this->redirectToRoute('app_liste_commandes');
+    }
+
+      
 
     //generate updateCommande function
     #[Route('/update_commande/{id}', name: 'app_update_commande')]

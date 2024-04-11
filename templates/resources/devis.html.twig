@@ -23,15 +23,15 @@
 
 		<br>
 		
-			Devis No : {{ commande.id }}
+			<h3> <strong>Devis No : {{ commande.code }}</strong></h3>
 			{# Add other properties of commande here if needed #}
+			<h3 class="mt-2"> <strong>Tunis : 17/20/30</strong> </h3>
 		
 		<br>
-		Tunis : 17/20/30 <br>
 
 
-		<div style="display: inline-block; margin-right: 20px;">
-			<table border="1" cellpadding="5" cellspacing="0">
+		<div style="display: inline-block; margin-right: 20px; width: 40%;">
+			 <table border="1" cellpadding="5" cellspacing="0" style="width: 100%; padding: 10px;">
 				<tr>
 					<td>{{app.user.fullname}}</td>
 				</tr>
@@ -47,8 +47,8 @@
 			</table>
 		</div>
 
-		<div style="display: inline-block;">
-			<table border="1" cellpadding="5" cellspacing="0">
+		<div style="display: inline-block; width: 20%;">
+			<table border="1" cellpadding="5" cellspacing="0" style="width: 100%; padding: 40%;">
 				<tr>
 
 					<td>Client : {{ client.nomprenom }}</td>
@@ -56,52 +56,52 @@
 
 			</table>
 		</div>
+
+
 		<br><br><br>
-		<div style="display: inline-block; margin-right: 20px;">
-			<table border="1" cellpadding="5" cellspacing="0">
-				<thead>
+
+		<div style="display: block;">
+			<table border="1" cellpadding="5" cellspacing="0" style="width: 100%; font-size: 1.2em;">
+				<thead class="thead-dark" style="background-color: #30C8D9; color: white;">
 					<tr>
-						<th>
-							Code
-						</th>
-						<th>
-							Désignation
-						</th>
-						<th>
-							Quantite
-						</th>
-						<th>
-							PU.H.T
-						</th>
-						<th>
-							TTVA</th>
-						<th>
-							REMISE</th>
-						<th>
-							TIMBRE</th>
+							<th>Client</th>
+							<th>Code</th>
+							<th>Materiel</th>
+							<th>Quantite</th>
+							<th>PU.H.T</th>
+							<th>TTVA</th>
+							<th>REMISE</th>
+							<th>TIMBRE</th>
+							<th>Date</th>
 					</tr>
 				</thead>
 				<tbody>
-					{% for commandeMateriel in commandeMateriels %}
-						<tr>
-							<td>{{commande.code}}</td>
-							<td>{{commandeMateriel.materiel.nom}}</td>
-							<td>{{commande.qte}}</td>
-							<td>{{commande.puht}}</td>
-							<td>{{commande.ttva}}</td>
-							<td>{{commande.remise}}</td>
-							<td>{{commande.timbre}}</td>
-						</tr>
+					{% for item in commandes %}
+						{% set numRows = item.commandemateriels|length %}
+						{% for commande_materiel in item.commandemateriels %}
+							<tr style="padding: 10px;">
+									{% if loop.first %}
+										<td rowspan="{{ numRows }}">{{ item.client.nomprenom }}</td>
+										<td rowspan="{{ numRows }}">{{ item.code }}</td>
+									{% endif %}
+
+									<td>{{ commande_materiel.materiel.nom }}</td>
+									<td>{{ commande_materiel.qte }}</td>
+									<td>{{ commande_materiel.prix }}</td>
+
+									{% if loop.first %}
+										<td rowspan="{{ numRows }}">{{ item.ttva }}</td>
+										<td rowspan="{{ numRows }}">{{ item.remise }}</td>
+										<td rowspan="{{ numRows }}">{{ commande_materiel.timbre }}</td>
+										<td rowspan="{{ numRows }}">{{ item.date | date('d-m-Y') }}</td>  
+									{% endif %}
+
+								</tr>
+						{% endfor %}
 					{% endfor %}
 				</tbody>
-
 			</table>
 		</div>
-
-
-
-
-
 
 
 
