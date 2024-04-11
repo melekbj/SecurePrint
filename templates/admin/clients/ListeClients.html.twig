@@ -2,87 +2,62 @@
 
 
 {% block body %}
-   <div class="container-scroller">
-      <div class="container-fluid page-body-wrapper ">
+  <div class="container-scroller">
+    <div class="container-fluid page-body-wrapper">
         <div class="main-panel col-lg-12">
-        <div class="d-flex justify-content-end">
-        <button type="button" class="btn btn-primary btn-fw col-lg-1 float-right" data-toggle="modal" data-target="#addClient">Ajouter Client +</button>
-        </div>
-
-          <div class="content-wrapper">
-                
-              {% for message in app.flashes('success') %}
-								<div class="alert alert-success">
-									{{ message }}
-								</div>
-							{% endfor %}
-
-              <div class="card">
-                <div class="card-header">
-                  <h5 class="card-title text-center">Liste des clients</h5>
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-primary btn-fw col-lg-1 float-right" data-toggle="modal" data-target="#addClient">Ajouter Client +</button>
+            </div>
+            <div class="content-wrapper">
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                <div class=" border-primary mb-3">
+                    
+                        <h3 class="text-center text-github font-weight-bold my-4">Liste des clients</h3>
+                    
+                    <div class="">
+                        <table class="table table-bordered table-hover">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Nom et Prenom</th>
+                                    <th>adresse</th>
+                                    <th>ville</th>
+                                    <th>phone</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for c in users %}
+                                    <tr>
+                                        <td>{{c.nomprenom}}</td>
+                                        <td>{{c.adresse}}</td>
+                                        <td>{{c.ville}}</td>
+                                        <td>{{c.phone}}</td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <a class="dropdown-toggle" href="#" role="button" id="actionsDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </a>
+                                                <ul class="dropdown-menu" aria-labelledby="actionsDropdown">
+                                                    <li><a class="dropdown-item" href="{{path('app_edit_client',{'id':c.id})}}"><i class="fas fa-edit"></i> Edit</a></li>
+                                                    <li><a onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur?')" class="dropdown-item" href="{{path('app_delete_client',{'id':c.id})}}"><i class="fas fa-trash-alt"></i> Delete</a></li>
+                                                    <li><a class="dropdown-item" href="{{path('app_more',{'id':c.id})}}">More ..</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="card-body">
-                  <div class="">
-                    <table class="table table-bordered table-hover">
-                      <thead>
-                        <tr>
-                          <th>Nom et Prenom</th>
-                          <th>adresse</th>
-                          <th>ville</th>
-                          <th>phone</th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {% for c in users %}
-                          <tr>
-                            <td>{{c.nomprenom}}</td>
-                            <td>{{c.adresse}}</td>
-                            <td>{{c.ville}}</td>
-                            <td>{{c.phone}}</td>
-                            <td>
-                              <div class="dropdown">
-                                <a class="dropdown-toggle" href="#" role="button" id="actionsDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                  <i class="fas fa-ellipsis-v"></i>
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="actionsDropdown">
-                                  <li>
-                                    <a class="dropdown-item" href="{{path('app_edit_client',{'id':c.id})}}">
-                                      <i class="fas fa-edit"></i>
-                                      Edit
-                                    </a>
-                                  </li>
-                                  <li>
-                                    <a onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur?')" class="dropdown-item" href="{{path('app_delete_client',{'id':c.id})}}">
-                                      <i class="fas fa-trash-alt"></i>
-                                      Delete
-                                    </a>
-                                  </li>
-                                  <li>
-                                    <a class="dropdown-item" href="{{path('app_more',{'id':c.id})}}">More ..</a>
-                                  </li>
-                                </ul>
-                              </div>
-                            </td>
-                          </tr>
-                        {% endfor %}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-
-
-
-                
-
-          </div>
-          <!-- content-wrapper ends -->
+            </div>
         </div>
-        <!-- main-panel ends -->
-      </div>
-      <!-- page-body-wrapper ends -->
     </div>
+</div>
 
 
 <!-- Button trigger modal -->

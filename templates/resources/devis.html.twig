@@ -82,34 +82,19 @@
 					</tr>
 				</thead>
 				<tbody>
-					
-
+					{% for commandeMateriel in commandeMateriels %}
 						<tr>
-							<td>
-								{{commande.code}}
-							</td>
-							<td>
-								{{commande.designation}}
-							</td>
-							<td>
-								{{commande.qte}}
-							</td>
-							<td>
-								{{commande.puht}}
-							</td>
-							<td>
-								{{commande.ttva}}
-							</td>
-							<td>
-								{{commande.remise}}
-							</td>
-							<td>
-								{{commande.timbre}}
-							</td>
+							<td>{{commande.code}}</td>
+							<td>{{commandeMateriel.materiel.nom}}</td>
+							<td>{{commande.qte}}</td>
+							<td>{{commande.puht}}</td>
+							<td>{{commande.ttva}}</td>
+							<td>{{commande.remise}}</td>
+							<td>{{commande.timbre}}</td>
 						</tr>
-
-					
+					{% endfor %}
 				</tbody>
+
 			</table>
 		</div>
 

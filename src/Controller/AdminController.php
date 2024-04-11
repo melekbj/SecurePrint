@@ -197,7 +197,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/commandes/{id}', name: 'app_commandes')]
-    public function showCommandes($id, PersistenceManagerRegistry $doctrine): Response
+    public function showCommandesByClient($id, PersistenceManagerRegistry $doctrine): Response
     {
         // Retrieve the client information from the database based on the provided id
         $client = $doctrine->getRepository(Clients::class)->find($id);
@@ -210,12 +210,21 @@ class AdminController extends AbstractController
         // Retrieve the commands for this client
         $commandes = $client->getCommandes();
 
+        // Fetch the CommandeMateriel entities associated with each Commande
+        $commandeMaterielRepository = $doctrine->getRepository(CommandeMateriel::class);
+        $commandeMateriels = [];
+        foreach ($commandes as $commande) {
+            $commandeMateriels[$commande->getId()] = $commandeMaterielRepository->findBy(['commande' => $commande]);
+        }
+
         // Render the client's commands in a template
         return $this->render('admin/commandes/commandesByClient.html.twig', [
             'commandes' => $commandes,
             'client' => $client,
+            'commandeMateriels' => $commandeMateriels,
         ]);
     }
+
 
 
 
@@ -239,10 +248,15 @@ class AdminController extends AbstractController
             throw $this->createNotFoundException('Command not found with ID: ' . $commandId);
         }
 
-        // Render the Twig template and pass the client details and the command
+        // Fetch the CommandeMateriel entities associated with the Commande
+        $commandeMaterielRepository = $entityManager->getRepository(CommandeMateriel::class);
+        $commandeMateriels = $commandeMaterielRepository->findBy(['commande' => $commande]);
+
+        // Render the Twig template and pass the client details, the command, and the CommandeMateriels
         $html = $this->renderView('/resources/devis.html.twig', [
             'client' => $client,
             'commande' => $commande,
+            'commandeMateriels' => $commandeMateriels,
         ]);
 
         $pdfContent = $snappy->getOutputFromHtml($html);
@@ -258,6 +272,7 @@ class AdminController extends AbstractController
         );
     }
 
+
     
     //generate addCommande function
     #[Route('/liste_commande', name: 'app_liste_commandes')]
@@ -266,67 +281,75 @@ class AdminController extends AbstractController
         $em = $doctrine->getManager();
         $commandes = $em->getRepository(Commande::class)->findAll();
 
+        // Fetch the CommandeMateriel entities associated with each Commande
+        $commandeMaterielRepository = $em->getRepository(CommandeMateriel::class);
+        $commandeMateriels = [];
+        foreach ($commandes as $commande) {
+            $commandeMateriels[$commande->getId()] = $commandeMaterielRepository->findBy(['commande' => $commande]);
+        }
+
         return $this->render('admin/commandes/listeCommandes.html.twig', [
             'commandes' => $commandes,
-            
+            'commandeMateriels' => $commandeMateriels,
         ]);
     }
 
+
     //generate ajoutCommande function
     #[Route('/ajout_commande', name: 'app_ajout_commande')]
-public function ajoutCommande(Request $request, PersistenceManagerRegistry $doctrine): Response
-{
+    public function ajoutCommande(Request $request, PersistenceManagerRegistry $doctrine): Response
+    {
 
-    $clients = $doctrine->getRepository(Clients::class)->findAll();
-        $materiels = $doctrine->getRepository(Materiel::class)->findAll();
+        $clients = $doctrine->getRepository(Clients::class)->findAll();
+            $materiels = $doctrine->getRepository(Materiel::class)->findAll();
 
-    if ($request->isMethod('POST')) {
-        // Get the submitted data
-        $formData = $request->request->all();
+        if ($request->isMethod('POST')) {
+            // Get the submitted data
+            $formData = $request->request->all();
 
-        // Create a new Commande entity and set its properties
-        $commande = new Commande();
-        $commande->setCode($formData['code']);
-        $commande->setQte($formData['qte']);
-        $commande->setPuht($formData['puht']);
-        $commande->setTtva($formData['ttva']);
-        $commande->setRemise($formData['remise']);
-        $commande->setTimbre($formData['timbre']);
-        $commande->setDate(new \DateTime($formData['date']));
+            // Create a new Commande entity and set its properties
+            $commande = new Commande();
+            $commande->setCode($formData['code']);
+            $commande->setQte($formData['qte']);
+            $commande->setPuht($formData['puht']);
+            $commande->setTtva($formData['ttva']);
+            $commande->setRemise($formData['remise']);
+            $commande->setTimbre($formData['timbre']);
+            $commande->setDate(new \DateTime($formData['date']));
+            
+
+            // Get the Client entity from the form data
+            $clientId = $formData['client'];
+            $client = $doctrine->getRepository(Clients::class)->find($clientId);
+            $commande->setClient($client);
+
+            // Persist the Commande entity
+            $entityManager = $doctrine->getManager();
+            $entityManager->persist($commande);
+
+            // Get the Materiel entity from the form data
+            $materielId = $formData['materiel'];
+            $materiel = $doctrine->getRepository(Materiel::class)->find($materielId);
+
+            // Create a new CommandeMateriel entity and set its properties
+            $commandeMateriel = new CommandeMateriel();
+            $commandeMateriel->setCommande($commande);
+            $commandeMateriel->setMateriel($materiel);
+            // Set other properties of CommandeMateriel as needed
+
+            // Persist the CommandeMateriel entity
+            $entityManager->persist($commandeMateriel);
+
+            $entityManager->flush();
+            $this->addFlash('success', 'Commande added successfully');
+            return $this->redirectToRoute('app_liste_commandes');
+        }
+        return $this->render('admin/commandes/ajoutCommande.html.twig', [
+            'clients' => $clients,
+            'materiels' => $materiels,
         
-
-        // Get the Client entity from the form data
-        $clientId = $formData['client'];
-        $client = $doctrine->getRepository(Clients::class)->find($clientId);
-        $commande->setClient($client);
-
-        // Persist the Commande entity
-        $entityManager = $doctrine->getManager();
-        $entityManager->persist($commande);
-
-        // Get the Materiel entity from the form data
-        $materielId = $formData['materiel'];
-        $materiel = $doctrine->getRepository(Materiel::class)->find($materielId);
-
-        // Create a new CommandeMateriel entity and set its properties
-        $commandeMateriel = new CommandeMateriel();
-        $commandeMateriel->setCommande($commande);
-        $commandeMateriel->setMateriel($materiel);
-        // Set other properties of CommandeMateriel as needed
-
-        // Persist the CommandeMateriel entity
-        $entityManager->persist($commandeMateriel);
-
-        $entityManager->flush();
-        $this->addFlash('success', 'Commande added successfully');
-        return $this->redirectToRoute('app_liste_commandes');
+        ]);
     }
-    return $this->render('admin/commandes/ajoutCommande.html.twig', [
-        'clients' => $clients,
-        'materiels' => $materiels,
-    
-    ]);
-}
 
 
 
