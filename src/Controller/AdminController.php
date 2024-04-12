@@ -317,6 +317,82 @@ class AdminController extends AbstractController
         ]);
     }
 
+    #[Route('/liste_devis', name: 'app_liste_devis')]
+    public function listDevis(PersistenceManagerRegistry $doctrine, Request $request): Response
+    {
+        $em = $doctrine->getManager();
+        $commandes = $em->getRepository(Commande::class)->findBy(['type' => 'devis']);
+
+        $commandeRepository = $doctrine->getRepository(Commande::class);
+
+        $code = $request->query->get('code');
+        $date = $request->query->get('date');
+
+        // Create the query builder
+        $queryBuilder = $commandeRepository->createQueryBuilder('c')
+        ->where('c.type = :type')
+        ->setParameter('type', 'devis');
+
+        // Apply filters
+        if ($code) {
+        $queryBuilder->andWhere('c.code LIKE :code')
+            ->setParameter('code', '%' . $code . '%');
+        }
+
+        if ($date) {
+        $queryBuilder->andWhere('c.date = :date') // Adjust this based on your actual date field name
+            ->setParameter('date', new \DateTime($date));
+        }
+
+        // Get the query
+        $query = $queryBuilder->getQuery();
+
+        // Get the result of the query
+        $commandes = $query->getResult();
+
+        return $this->render('admin/commandes/listeDevis.html.twig', [ 
+        'commandes' => $commandes,
+        ]);
+    }
+
+    #[Route('/liste_factures', name: 'app_liste_factures')]
+    public function listFactures(PersistenceManagerRegistry $doctrine, Request $request): Response
+    {
+        $em = $doctrine->getManager();
+        $commandes = $em->getRepository(Commande::class)->findBy(['type' => 'facture']);
+
+        $commandeRepository = $doctrine->getRepository(Commande::class);
+
+        $code = $request->query->get('code');
+        $date = $request->query->get('date');
+
+        // Create the query builder
+        $queryBuilder = $commandeRepository->createQueryBuilder('c')
+        ->where('c.type = :type')
+        ->setParameter('type', 'facture');
+
+        // Apply filters
+        if ($code) {
+        $queryBuilder->andWhere('c.code LIKE :code')
+            ->setParameter('code', '%' . $code . '%');
+        }
+
+        if ($date) {
+        $queryBuilder->andWhere('c.date = :date') // Adjust this based on your actual date field name
+            ->setParameter('date', new \DateTime($date));
+        }
+
+        // Get the query
+        $query = $queryBuilder->getQuery();
+
+        // Get the result of the query
+        $commandes = $query->getResult();
+
+        return $this->render('admin/commandes/listeFactures.html.twig', [ 
+        'commandes' => $commandes,
+        ]);
+    }
+
 
     #[Route('/detail_commande/{id}', name: 'app_detail_commande')]
     public function detailCommande($id, CommandeRepository $rep, CommandeMaterielRepository $repcm): Response
