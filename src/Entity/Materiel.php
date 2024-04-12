@@ -8,10 +8,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 
 
 #[ORM\Entity(repositoryClass: MaterielRepository::class)]
+#[UniqueEntity(fields: ['reference'], message: 'There is already a material with this reference')]
 #[Vich\Uploadable]
 class Materiel
 {
@@ -20,7 +22,7 @@ class Materiel
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255,nullable:true)]
     private ?string $nom = null;
 
     #[Vich\UploadableField(mapping: 'materiels', fileNameProperty: 'photo')]
@@ -29,7 +31,7 @@ class Materiel
     #[ORM\Column(length: 255, nullable:true)]
     private ?string $photo = null;
 
-    #[ORM\Column(length: 255,unique:true)]
+    #[ORM\Column(length: 255,unique:true,nullable:true)]
     private ?string $reference = null;
 
     #[ORM\OneToMany(mappedBy: 'materiel', targetEntity: CommandeMateriel::class)]

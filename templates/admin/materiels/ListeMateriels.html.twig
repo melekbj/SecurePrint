@@ -30,14 +30,17 @@
                       </thead>
                       <tbody>
                       {% for m in materiels %}
-                        
                         <tr>
-                          {% if m.photo %}
-                            {% set imageUrl = vich_uploader_asset(m, 'imageFile') %}
-                            <td class="py-1"><img style="width:60px;height:50px;" src="{{ asset(imageUrl) }}" alt="image" /></td>
-                          {% endif %}
-                          <td> {{m.nom}} </td>
-                          <td> {{m.reference}} </td>
+                          <td class="py-1">
+                            {% if m.photo %}
+                              {% set imageUrl = vich_uploader_asset(m, 'imageFile') %}
+                              <img style="width:60px;height:50px;" src="{{ asset(imageUrl) }}" alt="image" />
+                            {% else %}
+                              No photo
+                            {% endif %}
+                          </td>
+                          <td> {{ m.nom is not empty ? m.nom : 'No name' }} </td>
+                          <td> {{ m.reference is not empty ? m.reference : 'No ref' }} </td>
                           <td>
                             <div class="dropdown">
                               <a class="dropdown-toggle" href="#" role="button" id="actionsDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -50,10 +53,10 @@
                             </div>
                           </td>
                         </tr>
-
-                        {% endfor %}
+                      {% endfor %}
                       </tbody>
                     </table>
+
                   </div>
                 </div>
               </div>
@@ -78,22 +81,28 @@
         </button>
       </div>
       <div class="modal-body">
-        {{ form_start(addMateriel, {'attr': {'novalidate': 'novalidate'}}) }}
-        <div class="mb-2">
-            {{ form_widget(addMateriel.nom, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
-        </div>
-        <div class="mb-2">
-            {{ form_widget(addMateriel.imageFile, {'attr': {'class': 'form-control'}}) }}
-        </div>
-        <div class="mb-2">
-            {{ form_widget(addMateriel.reference, {'attr': {'class': 'form-control', 'placeholder': 'Reference'}}) }}
-        </div>
-        
+          {{ form_start(addMateriel, {'attr': {'novalidate': 'novalidate', 'id': 'materiel_form'}}) }}
+          <div class="mb-2">
+              {{ form_widget(addMateriel.nom, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
+          </div>
+          <div class="mb-2">
+              {{ form_widget(addMateriel.imageFile, {'attr': {'class': 'form-control'}}) }}
+          </div>
+          <div class="mb-2">
+              {{ form_widget(addMateriel.reference, {'attr': {'class': 'form-control', 'placeholder': 'Reference', 'id': 'materiel_reference'}}) }}
+              <div id="reference-error" class="alert alert-danger" style="display: none;"></div>
+              {% if form_errors(addMateriel.reference) %}
+                  <div class="alert alert-danger">
+                      {{ form_errors(addMateriel.reference) }}
+                  </div>
+              {% endif %}
+          </div>
       </div>
       <div class="modal-footer">
-        {{ form_widget(addMateriel.save, {'label': 'Add new +', 'attr': {'class': 'btn btn-primary'}}) }}
-        {{ form_end(addMateriel)}}
+          {{ form_widget(addMateriel.save, {'label': 'Add new +', 'attr': {'class': 'btn btn-primary'}}) }}
+          {{ form_end(addMateriel)}}
       </div>
+
     </div>
   </div>
 </div>

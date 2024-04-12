@@ -116,14 +116,14 @@
                                 </tr>
                                 <tr>
                                     <th>Total TTC</th>
-                                    <td>{{ totalTTC|number_format(0, '.', ' ') }}</td>
+                                    <td>{{ totalTTC|number_format(3, '.', ' ') }}</td>
                                 </tr>
                             </table>
 
                         </div>
                     </div>
 
-                <a href="{{path('generate_pdf',{'clientId':client.id, 'commandId':commande.id})}}">Imprimer devis</a>
+                <a class=" mb-5 btn btn-success" href="{{path('generate_pdf',{'clientId':client.id, 'commandId':commande.id})}}">Imprimer devis</a>
 
             </div>
         </div>
