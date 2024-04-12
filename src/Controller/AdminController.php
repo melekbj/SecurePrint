@@ -15,6 +15,7 @@ use App\Repository\ClientsRepository;
 use App\Repository\CommandeRepository;
 use App\Repository\MaterielRepository;
 use Symfony\Component\HttpFoundation\Request;
+use App\Repository\CommandeMaterielRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -318,14 +319,16 @@ class AdminController extends AbstractController
 
 
     #[Route('/detail_commande/{id}', name: 'app_detail_commande')]
-    public function detailCommande($id, CommandeRepository $rep): Response
+    public function detailCommande($id, CommandeRepository $rep, CommandeMaterielRepository $repcm): Response
     {
         $commande = $rep->find($id);
         $client = $commande->getClient(); // Get the client associated with the commande
-
+        
+        $commandeMaterielRepository = $repcm->findAll();
         return $this->render('admin/commandes/detailCommande.html.twig', [
             'commande' => $commande,
             'client' => $client,
+            'commandeMateriels' => $commandeMaterielRepository,
             
         ]);
     }
@@ -356,7 +359,7 @@ class AdminController extends AbstractController
             // Create a new Commande entity and set its properties
             $commande = new Commande();
             $commande->setCode($formData['code']);
-            $commande->setTtva($formData['ttva']);
+            $commande->setType($formData['type']);
             $commande->setTimbre($formData['timbre']);
             $commande->setDate(new \DateTime($formData['date']));
             
@@ -374,8 +377,8 @@ class AdminController extends AbstractController
             $materielIds = $formData['materiel'];
             $quantities = $formData['quantity'];
             $prices = $formData['price'];
-            $tva = $formData['tva'];
-            $remise = $formData['remise'];
+            // $tva = $formData['tva'];
+            // $remise = $formData['remise'];
 
             foreach ($materielIds as $index => $materielId) {
                 $materiel = $doctrine->getRepository(Materiel::class)->find($materielId);
@@ -386,8 +389,8 @@ class AdminController extends AbstractController
                 $commandeMateriel->setMateriel($materiel);
                 $commandeMateriel->setQte($quantities[$index]);
                 $commandeMateriel->setPrix($prices[$index]);
-                $commandeMateriel->setTva($tva[$index]);
-                $commandeMateriel->setRemise($remise[$index]);
+                $commandeMateriel->setTva(19);
+                $commandeMateriel->setRemise(0);
     
                 // Persist the CommandeMateriel entity
                 $entityManager->persist($commandeMateriel);

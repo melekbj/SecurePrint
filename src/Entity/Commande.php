@@ -21,8 +21,11 @@ class Commande
     #[ORM\Column(length: 255,unique:true)]
     private ?string $code = null;
 
-    #[ORM\Column(nullable: true, options:["default" => 0])]
-    private ?float $ttva = null;
+    #[ORM\Column(length: 255,unique:false)]
+    private ?string $type = null;
+
+    // #[ORM\Column(nullable: true, options:["default" => 0])]
+    // private ?float $ttva = null;
 
     #[ORM\Column(nullable: true, options:["default" => 0])]
     private ?float $remise = null;
@@ -63,18 +66,30 @@ class Commande
         return $this;
     }
 
-
-    public function getTtva(): ?float
+    public function getType(): ?string
     {
-        return $this->ttva;
+        return $this->type;
     }
 
-    public function setTtva(?float $ttva): self
+    public function setType(string $type): self
     {
-        $this->ttva = $ttva;
+        $this->type = $type;
 
         return $this;
     }
+
+
+    // public function getTtva(): ?float
+    // {
+    //     return $this->ttva;
+    // }
+
+    // public function setTtva(?float $ttva): self
+    // {
+    //     $this->ttva = $ttva;
+
+    //     return $this;
+    // }
 
     public function getRemise(): ?float
     {

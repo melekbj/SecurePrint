@@ -22,11 +22,11 @@ class CommandeMateriel
     #[ORM\Column(nullable: true)]
     private ?float $prix = null;
 
-    #[ORM\Column(nullable: true, options:["default" => 0])]
-    private ?float $tva = null;
-
     #[ORM\Column]
     private ?int $qte = null;
+
+    #[ORM\Column(nullable: true, options:["default" => 0])]
+    private ?float $tva = null;
 
     #[ORM\Column(nullable: true, options:["default" => 0])]
     private ?float $remise = null;
@@ -72,19 +72,7 @@ class CommandeMateriel
         return $this;
     }
 
-    public function getTva(): ?float
-    {
-        return $this->tva;
-    }
 
-    public function setTva(?float $tva): self
-    {
-        $this->tva = $tva;
-
-        return $this;
-    }
-
-    
     public function getQte(): ?int
     {
         return $this->qte;
@@ -93,6 +81,18 @@ class CommandeMateriel
     public function setQte(int $qte): self
     {
         $this->qte = $qte;
+
+        return $this;
+    }
+
+    public function getTva(): ?float
+    {
+        return $this->tva;
+    }
+
+    public function setTva(?float $tva): self
+    {
+        $this->tva = $tva;
 
         return $this;
     }

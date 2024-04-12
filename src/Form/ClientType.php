@@ -9,6 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class ClientType extends AbstractType
 {
@@ -49,7 +50,14 @@ class ClientType extends AbstractType
                     'Zaghouan' => 'Zaghouan',
                 ],
             ])
-            ->add('phone')
+            ->add('phone', null, [
+                'constraints' => [
+                    new Assert\Regex([
+                        'pattern' => '/^\+?[0-9 ]+$/',
+                        'message' => 'Please enter a valid phone number',
+                    ]),
+                ],
+            ])
             ->add('save', SubmitType::class, [
                 'label' => 'Confirm changes',
                 'attr' => [

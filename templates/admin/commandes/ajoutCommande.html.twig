@@ -21,6 +21,17 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
+                                    <label for="type">Type:</label>
+                                    <select class="form-control" id="type" name="type" required>
+                                        <option value="" selected>Choisir un type</option>
+                                        <option value="devis">Devis</option>
+                                        <option value="facture">Facture</option>
+                                        {# <option value="facture">Facture</option> #}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
                                     <label for="code">Code:</label>
                                     <input type="text" class="form-control" id="code" name="code" required unique>
                                 </div>
@@ -36,26 +47,27 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="date">Date</label>
-                                    <input type="date" class="form-control" id="date" name="date" required>
-                                </div>
-                            </div>
+                            
                         </div>
                         <div class="row">
-                            <div class="col-md-4">
+                            {# <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="ttva">Taux TVA (%):</label>
                                     <input type="number" step="0.01" class="form-control" id="ttva" name="ttva" required>
                                 </div>
-                            </div>
+                            </div> #}
                             {# <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="remise">Remise:</label>
                                     <input type="number" step="0.01" class="form-control" id="remise" name="remise" required>
                                 </div>
                             </div> #}
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="date">Date</label>
+                                    <input type="date" class="form-control" id="date" name="date" required>
+                                </div>
+                            </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="timbre">Timbre:</label>
@@ -66,7 +78,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="materiel">Materiel:</label>
+                                    <label for="materiel">Désignation:</label>
                                     <div id="materielContainer">
                                         <div class="materielSelectContainer row">
                                             <div class="col-md-4">
@@ -83,12 +95,12 @@
                                             <div class="col-md-2">
                                                 <input type="number" class="form-control priceInput" name="price[]" placeholder="Prix" min="0" required>
                                             </div>
-                                            <div class="col-md-2">
+                                            {# <div class="col-md-2">
                                                 <input type="number" class="form-control tvaInput" name="tva[]" placeholder="TVA" min="0" required>
                                             </div>
                                             <div class="col-md-2">
                                                 <input type="number" class="form-control remiseInput" name="remise[]" placeholder="Remise" min="0" required>
-                                            </div>
+                                            </div> #}
                                         </div>
                                     </div>
                                     <button type="button" id="addMateriel" class="btn btn-primary mt-2">+</button>
@@ -149,12 +161,12 @@ document.getElementById('addMateriel').addEventListener('click', function() {
     newPriceInput.value = "";
 
     // Create a new TVA input and set its attributes
-    var newTvaInput = newSelectContainer.querySelector('.tvaInput');
-    newTvaInput.value = "";
+    //var newTvaInput = newSelectContainer.querySelector('.tvaInput');
+    //newTvaInput.value = "";
 
     // Create a new Remise input and set its attributes
-    var newRemiseInput = newSelectContainer.querySelector('.remiseInput');
-    newRemiseInput.value = "";
+    //var newRemiseInput = newSelectContainer.querySelector('.remiseInput');
+    //newRemiseInput.value = "";
 
     // Append the new select container to the materiel container
     document.getElementById('materielContainer').appendChild(newSelectContainer);

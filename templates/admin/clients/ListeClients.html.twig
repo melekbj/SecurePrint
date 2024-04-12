@@ -16,7 +16,7 @@
                 {% endfor %}
                 <div class=" border-primary mb-3">
                     
-                        <h3 class="text-center text-github font-weight-bold my-4">Liste des clients</h3>
+                        <h2 class="text-center text-github font-weight-bold my-4">Liste des clients</h2>
                     
                     <div class="">
                         <table class="table table-bordered table-hover">
@@ -67,7 +67,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Ajouter nouveau client</h5>
+        <h5 class="modal-title text-github" id="exampleModalLabel">Ajouter nouveau client</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -78,25 +78,45 @@
         }
     </style>
       <div class="modal-body">
-        {{ form_start(addClient) }}
-        <div class="mb-2">
-            {{ form_widget(addClient.nom_prenom, {'attr': {'class': 'form-control', 'placeholder': 'Nom et Prenom'}}) }}
+            {{ form_start(addClient) }}
+            <div class="mb-2">
+                {{ form_widget(addClient.nom_prenom, {'attr': {'class': 'form-control', 'placeholder': 'Nom et Prenom'}}) }}
+                {% if form_errors(addClient.nom_prenom) %}
+                    <div class="alert alert-danger">
+                        {{ form_errors(addClient.nom_prenom) }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="mb-2">
+                {{ form_widget(addClient.adresse, {'attr': {'class': 'form-control', 'placeholder': 'Adresse'}}) }}
+                {% if form_errors(addClient.adresse) %}
+                    <div class="alert alert-danger">
+                        {{ form_errors(addClient.adresse) }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="mb-2">
+                {{ form_widget(addClient.ville, {'attr': {'class': 'form-control', 'placeholder': 'Ville'}}) }}
+                {% if form_errors(addClient.ville) %}
+                    <div class="alert alert-danger">
+                        {{ form_errors(addClient.ville) }}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form_widget(addClient.phone, {'attr': {'class': 'form-control', 'placeholder': 'Phone'}}) }}
+                {% if form_errors(addClient.phone) %}
+                    <div class="alert alert-danger">
+                        {{ form_errors(addClient.phone) }}
+                    </div>
+                {% endif %}
+            </div>
         </div>
-        <div class="mb-2">
-            {{ form_widget(addClient.adresse, {'attr': {'class': 'form-control', 'placeholder': 'Adresse'}}) }}
+        <div class="modal-footer">
+            {{ form_widget(addClient.save, {'label': 'Confirmer', 'attr': {'class': 'btn btn-primary'}}) }}
+            {{ form_end(addClient)}}
         </div>
-        <div class="mb-2">
-            {{ form_widget(addClient.ville, {'attr': {'class': 'form-control', 'placeholder': 'Ville'}}) }}
-        </div>
-        <div>
-            {{ form_widget(addClient.phone, {'attr': {'class': 'form-control', 'placeholder': 'Phone'}}) }}
-        </div>
-        
-      </div>
-      <div class="modal-footer">
-        {{ form_widget(addClient.save, {'label': 'Confirmer', 'attr': {'class': 'btn btn-primary'}}) }}
-        {{ form_end(addClient)}}
-      </div>
+
     </div>
   </div>
 </div>

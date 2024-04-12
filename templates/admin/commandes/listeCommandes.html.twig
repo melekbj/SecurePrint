@@ -73,8 +73,8 @@
                                         <td>{{ commande_materiel.materiel.nom }}</td>
                                         <td>{{ commande_materiel.qte }}</td>
                                         <td>{{ commande_materiel.prix }}</td>
-                                        <td>{{ commande_materiel.tva }}</td>
-                                        <td>{{ commande_materiel.remise }}</td>
+                                        <td>{{ commande_materiel.tva }} %</td>
+                                        <td>{{ commande_materiel.remise|number_format(2, '.', ' ') }}</td>
                                         
                                         {% if loop.first %}
                                             <td rowspan="{{ numRows }}">{{ item.date | date('d-m-Y') }}</td>

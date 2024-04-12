@@ -6,8 +6,8 @@
     <div class="container-fluid page-body-wrapper">
         <div class="main-panel col-lg-12">
             <div class="content-wrapper">
-                <h3 class="text-center text-github font-weight-bold my-4">Informations detaille sur la commande N. {{commande.code}} </h3>
-                <h5 class=" text-github"> Date : {{ commande.date | date('d/m/Y') }}</h5>
+                <h3 class="text-center text-github font-weight-bold my-4">Détails de la commande N. {{commande.code}} </h3>
+                <h5 class=" text-github text-primary"> <i>Date : {{ commande.date | date('d/m/Y') }}</i></h5>
                 {% for message in app.flashes('success') %}
                     <div class="alert alert-success">
                         {{ message }}
@@ -25,7 +25,7 @@
                                 <th>PU.H.T</th>
                                 <th>R%</th>
                                 <th>TVA</th>
-                                <th>T.TC</th>
+                                <th>T.HT</th>
                                 
                             </tr>
                         </thead>
@@ -50,8 +50,8 @@
                                     <td>{{ commande_materiel.qte }}</td>
                                     <td>{{ commande_materiel.prix|number_format(0, '.', ' ') }}</td>
                                     <td>{{ commande_materiel.remise|number_format(2, '.', ' ') }}</td>
-                                    <td>{{ commande_materiel.tva|number_format(0, '.', ' ') }}</td>
-                                    <td>{{ ( (commande_materiel.prix * commande_materiel.qte )  + commande_materiel.tva)|number_format(0, '.', ' ') }}</td>
+                                    <td>{{ commande_materiel.tva|number_format(0, '.', ' ') }} %</td>
+                                    <td>{{ (commande_materiel.prix * commande_materiel.qte)|number_format(0, '.', ' ') }}</td>
                                     
 
                                 </tr>
@@ -59,7 +59,8 @@
                                 {% set totalHT = totalHT + (commande_materiel.prix * commande_materiel.qte ) %}
                                 {% set Remise = commande_materiel.prix * ( commande_materiel.remise / 100 )  %}
                                 {% set totalRemise = totalRemise + Remise  %}
-                                {% set totalTVA = totalTVA + commande_materiel.tva %}
+                                {% set totalTVA = totalTVA + ( ( commande_materiel.prix * commande_materiel.qte ) * commande_materiel.tva / 100 ) %}
+                                
 
                             {% endfor %}
 
@@ -76,7 +77,7 @@
                     </table>
 
 
-                    {% set montantTVA = totalHT * (commande.ttva / 100) %} 
+
 
                     <div class="row mt-5">
                         <div class="col-md-6">
@@ -89,8 +90,8 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>{{ commande.ttva }}</td>
-                                        <td>{{ montantTVA }}</td>
+                                        <td>19 %</td>
+                                        <td>{{ totalTVA|number_format(3, '.', ' ') }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -104,7 +105,7 @@
                                 </tr>
                                 <tr>
                                     <th>Total Remise</th>
-                                    <td>{{ totalRemise|number_format(0, '.', ' ') }}</td>
+                                    <td>{{ totalRemise|number_format(3, '.', ' ') }}</td>
                                 </tr>
                                 <tr>
                                     <th>Total TVA</th>
@@ -112,7 +113,7 @@
                                 </tr>
                                 <tr>
                                     <th>TIMBRE</th>
-                                    <td>{{ commande.timbre|number_format(3, '.', ',') }}</td>
+                                    <td>{{ commande.timbre }}</td>
                                 </tr>
                                 <tr>
                                     <th>Total TTC</th>

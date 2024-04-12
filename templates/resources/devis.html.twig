@@ -37,6 +37,9 @@
 					<td>{{app.user.email}}</td>
 				</tr>
 				<tr>
+					<td>STE KEBSI MULTICOM</td>
+				</tr>
+				<tr>
 					<td>MF : {{app.user.mf}}</td>
 				</tr>
 			</table>
@@ -59,14 +62,14 @@
 				<table border="1" cellpadding="5" cellspacing="0" style="width: 100%; font-size: 1.2em;">
 					<thead class="thead-dark" style="background-color: #30C8D9; color: white;">
 						<tr>
-							<th>Client</th>
+							{# <th>Client</th> #}
 							<th>Code</th>
 							<th>Désignation</th>
 							<th>Qte</th>
 							<th>PU.H.T</th>
 							<th>R%</th>
 							<th>TVA</th>
-							<th>T.TC</th>
+							<th>T.HT</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -78,25 +81,27 @@
 						 {% set item = commande %}
 							{% set numRows = item.commandemateriels|length %}
 							{% for commande_materiel in item.commandemateriels %}
-								<tr style="padding: 30px;">
-									{% if loop.first %}
-										<td rowspan="{{ numRows }}">{{ item.client.nomprenom }}</td>
-										<td rowspan="{{ numRows }}">{{ item.code }}</td>
-									{% endif %}
+								<tr>
+                                    {% if loop.first %}
+                                        {# <td rowspan="{{ numRows }}">{{ item.client.nomprenom }}</td> #}
+                                        <td rowspan="{{ numRows }}">{{ item.code }}</td>
+                                        
+                                    {% endif %}
 
-									<td>{{ commande_materiel.materiel.nom }}</td>
+                                    <td>{{ commande_materiel.materiel.nom }}</td>
                                     <td>{{ commande_materiel.qte }}</td>
                                     <td>{{ commande_materiel.prix|number_format(0, '.', ' ') }}</td>
                                     <td>{{ commande_materiel.remise|number_format(2, '.', ' ') }}</td>
-                                    <td>{{ commande_materiel.tva|number_format(0, '.', ' ') }}</td>
-                                    <td>{{ ( (commande_materiel.prix * commande_materiel.qte )  + commande_materiel.tva)|number_format(0, '.', ' ') }}</td>
+                                    <td>{{ commande_materiel.tva|number_format(0, '.', ' ') }} %</td>
+                                    <td>{{ (commande_materiel.prix * commande_materiel.qte)|number_format(0, '.', ' ') }}</td>
+                                    
 
-								</tr>
+                                </tr>
 
 								{% set totalHT = totalHT + (commande_materiel.prix * commande_materiel.qte ) %}
                                 {% set Remise = commande_materiel.prix * ( commande_materiel.remise / 100 )  %}
                                 {% set totalRemise = totalRemise + Remise  %}
-                                {% set totalTVA = totalTVA + commande_materiel.tva %}
+                                {% set totalTVA = totalTVA + ( ( commande_materiel.prix * commande_materiel.qte ) * commande_materiel.tva / 100 ) %}
 
 							{% endfor %}
 						
@@ -112,9 +117,9 @@
 				</table>
 		</div>
 
-				{% set montantTVA = totalHT * (commande.ttva / 100) %} 
+		<br><br><br>
 
-					<div style="display: inline-block; margin-right: 20px; width: 40%;">
+					<div style="display: inline-block; margin-right: 40px; width: 40%;">
 				
 					
 						<table class="table table-striped table-bordered">
@@ -126,8 +131,8 @@
 							</thead>
 							<tbody>
 								<tr>
-									<td>{{ commande.ttva }}</td>
-									<td>{{ montantTVA }}</td>
+									<td>19 %</td>
+                                    <td>{{ totalTVA|number_format(3, '.', ' ') }}</td>
 								</tr>
 							</tbody>
 						</table>
@@ -142,7 +147,7 @@
                                 </tr>
                                 <tr>
                                     <th>Total Remise</th>
-                                    <td>{{ totalRemise|number_format(0, '.', ' ') }}</td>
+                                    <td>{{ totalRemise|number_format(3, '.', ' ') }}</td>
                                 </tr>
                                 <tr>
                                     <th>Total TVA</th>
@@ -150,7 +155,7 @@
                                 </tr>
                                 <tr>
                                     <th>TIMBRE</th>
-                                    <td>{{ commande.timbre|number_format(3, '.', ',') }}</td>
+                                    <td>{{ commande.timbre }}</td>
                                 </tr>
                                 <tr>
                                     <th>Total TTC</th>

@@ -81,9 +81,14 @@
         </button>
       </div>
       <div class="modal-body">
-          {{ form_start(addMateriel, {'attr': {'novalidate': 'novalidate', 'id': 'materiel_form'}}) }}
+          {{ form_start(addMateriel, {'attr': {'id': 'materiel_form'}}) }}
           <div class="mb-2">
-              {{ form_widget(addMateriel.nom, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
+              {{ form_widget(addMateriel.nom, {'attr': {'class': 'form-control', 'placeholder': 'Nom', 'required': 'required'}}) }}
+                {% if form_errors(addMateriel.nom) %}
+                    <div class="alert alert-danger">
+                        {{ form_errors(addMateriel.nom) }}
+                    </div>
+                {% endif %}
           </div>
           <div class="mb-2">
               {{ form_widget(addMateriel.imageFile, {'attr': {'class': 'form-control'}}) }}
