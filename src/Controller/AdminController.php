@@ -279,10 +279,36 @@ class AdminController extends AbstractController
     
     
     #[Route('/liste_commande', name: 'app_liste_commandes')]
-    public function addCommande(PersistenceManagerRegistry $doctrine, Request $request): Response
+    public function listCommande(PersistenceManagerRegistry $doctrine, Request $request): Response
     {
         $em = $doctrine->getManager();
         $commandes = $em->getRepository(Commande::class)->findAll();
+
+        $commandeRepository = $doctrine->getRepository(Commande::class);
+
+        $code = $request->query->get('code');
+        $date = $request->query->get('date');
+
+        // Create the query builder
+        $queryBuilder = $commandeRepository->createQueryBuilder('c');
+
+        // Apply filters
+        
+        if ($code) {
+            $queryBuilder->orWhere('c.code LIKE :code')
+                ->setParameter('code', '%' . $code . '%');
+        }
+
+        if ($date) {
+            $queryBuilder->andWhere('c.date = :date') // Adjust this based on your actual date field name
+                ->setParameter('date', new \DateTime($date));
+        }
+
+        // Get the query
+        $query = $queryBuilder->getQuery();
+
+        // Get the result of the query
+        $commandes = $query->getResult();
 
 
         return $this->render('admin/commandes/listeCommandes.html.twig', [ 
@@ -295,8 +321,12 @@ class AdminController extends AbstractController
     public function detailCommande($id, CommandeRepository $rep): Response
     {
         $commande = $rep->find($id);
+        $client = $commande->getClient(); // Get the client associated with the commande
+
         return $this->render('admin/commandes/detailCommande.html.twig', [
             'commande' => $commande,
+            'client' => $client,
+            
         ]);
     }
 
@@ -307,7 +337,7 @@ class AdminController extends AbstractController
     {
 
         $clients = $doctrine->getRepository(Clients::class)->findAll();
-            $materiels = $doctrine->getRepository(Materiel::class)->findAll();
+        $materiels = $doctrine->getRepository(Materiel::class)->findAll();
 
         if ($request->isMethod('POST')) {
             // Get the submitted data
@@ -316,7 +346,7 @@ class AdminController extends AbstractController
             // Check if a Commande with the same code already exists
         $existingCommande = $doctrine->getRepository(Commande::class)->findOneBy(['code' => $formData['code']]);
         if ($existingCommande) {
-            $this->addFlash('error', 'There is already a command with this code');
+            $this->addFlash('error', 'Il y a déjà une commande avec ce code');
             return $this->render('admin/commandes/ajoutCommande.html.twig', [
                 'clients' => $clients,
                 'materiels' => $materiels,

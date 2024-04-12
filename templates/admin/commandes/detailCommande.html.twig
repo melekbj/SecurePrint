@@ -34,6 +34,7 @@
                             {% set numRows = item.commandemateriels|length %}
 
                             {% set totalHT = 0 %}
+                            {% set Remise = 0 %}
                             {% set totalRemise = 0 %}
                             {% set totalTVA = 0 %}
 
@@ -47,28 +48,32 @@
 
                                     <td>{{ commande_materiel.materiel.nom }}</td>
                                     <td>{{ commande_materiel.qte }}</td>
-                                    <td>{{ commande_materiel.prix }}</td>
-                                    <td>{{ commande_materiel.remise }}</td>
-                                    <td>{{ commande_materiel.tva }}</td>
-                                    <td>{{ commande_materiel.prix + commande_materiel.tva }}</td>
+                                    <td>{{ commande_materiel.prix|number_format(0, '.', ' ') }}</td>
+                                    <td>{{ commande_materiel.remise|number_format(2, '.', ' ') }}</td>
+                                    <td>{{ commande_materiel.tva|number_format(0, '.', ' ') }}</td>
+                                    <td>{{ ( (commande_materiel.prix * commande_materiel.qte )  + commande_materiel.tva)|number_format(0, '.', ' ') }}</td>
                                     
 
                                 </tr>
 
-                                {% set totalHT = totalHT + commande_materiel.prix + commande_materiel.tva %}
-                                {% set totalRemise = totalRemise + commande_materiel.remise %}
+                                {% set totalHT = totalHT + (commande_materiel.prix * commande_materiel.qte ) %}
+                                {% set Remise = commande_materiel.prix * ( commande_materiel.remise / 100 )  %}
+                                {% set totalRemise = totalRemise + Remise  %}
                                 {% set totalTVA = totalTVA + commande_materiel.tva %}
 
                             {% endfor %}
 
-                            {% set totalTTC = totalHT + totalRemise + totalTVA + commande.timbre %}
+                            {% set totalTTC = totalHT + totalTVA + commande.timbre %}
+
+                            {# Subtract total remise from total TTC if total remise is greater than 0 #}
+                            {% if totalRemise > 0 %}
+                                {% set totalTTC = totalTTC - totalRemise %}
+                            {% endif %}
 
                             <tr style="border-bottom: 2px solid black;"></tr>
                         </tbody>
 
                     </table>
-
-
 
 
                     {% set montantTVA = totalHT * (commande.ttva / 100) %} 
@@ -95,30 +100,30 @@
                             <table class="table table-striped table-bordered">
                                 <tr>
                                     <th>Total H.T</th>
-                                    <td>{{ totalHT }}</td>
+                                    <td>{{ totalHT|number_format(0, '.', ' ') }}</td>
                                 </tr>
                                 <tr>
                                     <th>Total Remise</th>
-                                    <td>{{ totalRemise }}</td>
+                                    <td>{{ totalRemise|number_format(0, '.', ' ') }}</td>
                                 </tr>
                                 <tr>
                                     <th>Total TVA</th>
-                                    <td>{{ totalTVA }}</td>
+                                    <td>{{ totalTVA|number_format(0, '.', ' ') }}</td>
                                 </tr>
                                 <tr>
                                     <th>TIMBRE</th>
-                                    <td>{{ commande.timbre }}</td>
+                                    <td>{{ commande.timbre|number_format(3, '.', ',') }}</td>
                                 </tr>
                                 <tr>
                                     <th>Total TTC</th>
-                                    <td>{{ totalTTC }}</td>
+                                    <td>{{ totalTTC|number_format(0, '.', ' ') }}</td>
                                 </tr>
                             </table>
 
                         </div>
                     </div>
 
-                
+                <a href="{{path('generate_pdf',{'clientId':client.id, 'commandId':commande.id})}}">Imprimer devis</a>
 
             </div>
         </div>
