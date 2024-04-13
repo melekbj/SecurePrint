@@ -17,8 +17,8 @@ $(document).ready(function () {
 
     $(".animated-text").typed({
         strings: [
-            "Digital marketing app",
-            "Photographer",
+            "Une application de marketing numérique",
+            "Un Photographe",
             // "mobile first",
             // "startup template"
         ],

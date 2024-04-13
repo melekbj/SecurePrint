@@ -13,10 +13,10 @@ class CommandeMateriel
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'commandeMateriels')]
+    #[ORM\ManyToOne(inversedBy: 'commandeMateriels', cascade: ["remove"])]
     private ?Commande $commande = null;
 
-    #[ORM\ManyToOne(inversedBy: 'commandeMateriels')]
+    #[ORM\ManyToOne(inversedBy: 'commandeMateriels', cascade: ["remove"])]
     private ?Materiel $materiel = null;
 
     #[ORM\Column(nullable: true)]

@@ -24,16 +24,12 @@ class Commande
     #[ORM\Column(length: 255,unique:false)]
     private ?string $type = null;
 
-    // #[ORM\Column(nullable: true, options:["default" => 0])]
-    // private ?float $ttva = null;
-
     #[ORM\Column(nullable: true, options:["default" => 0])]
     private ?float $remise = null;
 
     #[ORM\Column(nullable: true, options:["default" => 0])]
     private ?float $timbre = null;
 
-    
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date = null;
@@ -41,7 +37,7 @@ class Commande
     #[ORM\ManyToOne(inversedBy: 'commandes')]
     private ?Clients $client = null;
 
-    #[ORM\OneToMany(mappedBy: 'commande', targetEntity: CommandeMateriel::class)]
+    #[ORM\OneToMany(mappedBy: 'commande', targetEntity: CommandeMateriel::class, cascade: ["remove"])]
     private Collection $commandeMateriels;
 
     public function __construct()

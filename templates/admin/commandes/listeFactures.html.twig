@@ -2,32 +2,38 @@
 
 
 {% block body %}
-   <div class="container-scroller">
-    <div class="container-fluid page-body-wrapper">
-        <div class="main-panel col-lg-12">
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
             <div class="d-flex justify-content-between align-items-center">
-                <form action="{{ path('app_liste_commandes') }}" method="get" class="form-inline">
-                    <div class="form-group">
+                <form action="{{ path('app_liste_factures') }}" method="get" class="d-flex">
+                    <div style="margin-right:10px;">
                         <h5 class="mt-2 text-github">
                             <strong>Filtrer par :</strong>
                         </h5>
                     </div>
 
-                    <div class="form-group ml-3">
+                    <div class="form-group ml-3" style="margin-right:10px;">
                         <input type="text" name="code" class="form-control" placeholder="N° de commande">
                     </div>
 
-                    <div class="form-group ml-3">
+                    <div class="form-group ml-3" style="margin-right:10px;">
                         <input type="date" name="date" class="form-control" placeholder="Filtrer par date">
                     </div>
 
-                    <button type="submit" class="btn btn-primary ml-3">Filtrer</button>
-                    <a href="{{ path('app_liste_commandes') }}" class="btn btn-danger ml-3">Annuler Filtres</a>
+                    <button style="margin-right:10px;" type="submit" class="btn btn-primary ml-3">Filtrer</button>
+                    <a href="{{ path('app_liste_factures') }}" class="btn btn-danger ml-3">Annuler Filtres</a>
                 </form>
-                <a class="btn btn-primary" href="{{path('app_ajout_commande')}}">Ajouter commande +</a>
+                <a class="btn btn-primary" href="{{path('app_ajout_facture')}}">Ajouter facture +</a>
             </div>
+        </div>
+    </div>
+</div>
 
-
+<div class="container-scroller">
+    <div class="container-fluid page-body-wrapper">
+        <div class="main-panel col-lg-12">
             <div class="content-wrapper">
                 <h3 class="text-center text-github font-weight-bold my-4">Liste des Factures</h3>
 
@@ -80,8 +86,8 @@
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </a>
                                                     <ul class="dropdown-menu" aria-labelledby="actionsDropdown">
-                                                        <li><a type="submit" class="dropdown-item" href="{{path('app_update_commande',{'id':item.id})}}"><i class="fas fa-edit"></i> Edit</a></li>
-                                                        <li><a onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce matériel ?')" type="submit" class="dropdown-item" href="{{path('app_delete_commande',{'id':item.id})}}"><i class="fas fa-trash-alt"></i> Delete</a></li>
+                                                        <li><a type="submit" class="dropdown-item" href="{{path('app_update_commande',{'id':item.id})}}"><i class="fas fa-edit"></i> Modifier</a></li>
+                                                        <li><a onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce matériel ?')" type="submit" class="dropdown-item" href="{{path('app_delete_commande',{'id':item.id})}}"><i class="fas fa-trash-alt"></i> Supprimer</a></li>
                                                     </ul>
                                                 </div>
                                             </td>
@@ -94,7 +100,7 @@
                         </tbody>
                     </table>
                 {% else %}
-                    <div class="bg-info text-black p-3">Aucune commande disponible</div>
+                    <div class="bg-info text-black p-3">Aucune facture disponible</div>
                 {% endif %}
 
             </div>

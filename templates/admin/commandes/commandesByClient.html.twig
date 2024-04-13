@@ -6,7 +6,7 @@
     <div class="container-fluid page-body-wrapper">
         <div class="main-panel col-lg-12">
             <div class="d-flex justify-content-end">
-                <a class="btn btn-primary" href="{{path('app_ajout_commande')}}">Ajouter commande +</a>
+                {# <a class="btn btn-primary" href="{{path('app_ajout_commande')}}">Ajouter commande +</a> #}
             </div>
             <div class="content-wrapper">
                 <h3 class="text-center text-github font-weight-bold my-4">Liste des commandes</h3>
@@ -49,8 +49,8 @@
                                         {% if loop.first %}
                                             
                                             
-                                            <td rowspan="{{ numRows }}">{{ item.ttva }}</td>
-                                            <td rowspan="{{ numRows }}">{{ item.remise }}</td>
+                                            <td rowspan="{{ numRows }}">{{ commande_materiel.tva }} %</td>
+                                            <td rowspan="{{ numRows }}">{{ commande_materiel.remise|number_format(2, '.', ' ') }}</td>
                                             <td rowspan="{{ numRows }}">{{ item.timbre }}</td>
                                             <td rowspan="{{ numRows }}">{{ item.date | date('d-m-Y') }}</td>
                                             <td rowspan="{{ numRows }}">
@@ -62,8 +62,8 @@
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </a>
                                                     <ul class="dropdown-menu" aria-labelledby="actionsDropdown">
-                                                    <li><a type="submit" class="dropdown-item" href="{{path('app_update_commande',{'id':item.id})}}"><i class="fas fa-edit"></i> Edit</a></li>
-                                                    <li><a onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce matériel ?')" type="submit" class="dropdown-item" href="{{path('app_delete_commande',{'id':item.id})}}"><i class="fas fa-trash-alt"></i> Delete</a></li>
+                                                    <li><a type="submit" class="dropdown-item" href="{{path('app_update_commande',{'id':item.id})}}"><i class="fas fa-edit"></i> Modifier</a></li>
+                                                    <li><a onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce matériel ?')" type="submit" class="dropdown-item" href="{{path('app_delete_commande',{'id':item.id})}}"><i class="fas fa-trash-alt"></i> Supprimer</a></li>
                                                     <li><a type="submit" class="dropdown-item" href="{{path('generate_pdf',{'clientId':client.id, 'commandId':item.id})}}"><i class="fas fa-print"></i> Imprimer devis</a></li>
 
                                                 
