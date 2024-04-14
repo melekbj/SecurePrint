@@ -37,7 +37,7 @@ class Commande
     #[ORM\ManyToOne(inversedBy: 'commandes')]
     private ?Clients $client = null;
 
-    #[ORM\OneToMany(mappedBy: 'commande', targetEntity: CommandeMateriel::class, cascade: ["remove"])]
+    #[ORM\OneToMany(mappedBy: 'commande', targetEntity: CommandeMateriel::class, cascade:['remove'])]
     private Collection $commandeMateriels;
 
     public function __construct()

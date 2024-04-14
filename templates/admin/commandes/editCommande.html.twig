@@ -1,16 +1,11 @@
 {% extends 'baseAdmin.html.twig' %}
 
 {% block body %}
-   <div class="container-scroller">
-      <div class="container-fluid page-body-wrapper ">
-        <div class="main-panel col-lg-12">
-        <div class="d-flex justify-content-end">
-          <div class="content-wrapper">
-             <div class="col-12 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Modifier commande</h4>
 
+    <div class="container-fluid">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title fw-semibold mb-4">Mettre à jour une commande</h5>
                     {% for message in app.flashes('error') %}
                         <div class="alert alert-danger">
                             {{ message }}
@@ -28,12 +23,12 @@
                         </div>
                         <!-- ... -->
                         <!-- ... -->
-                        <div class="form-group">
+                        <div class="form-group mt-3">
                             <label for="code">Code:</label>
                             <input type="text" class="form-control" id="code" name="code" required unique value="{{ commande.code }}">
                         </div>
                         <!-- ... -->
-                        <div class="form-group">
+                        <div class="form-group mt-3">
                             <label for="client">Client:</label>
                             <select class="form-control" id="client" name="client" required>
                                 <option value="" selected>Choisir un client</option>
@@ -43,19 +38,20 @@
                             </select>
                         </div>
                         <!-- ... -->
-                        <div class="form-group">
+                        <div class="form-group mt-3">
                             <label for="date">Date</label>
                             <input type="date" class="form-control" id="date" name="date" required value="{{ commande.date|date('Y-m-d') }}">
                         </div>
                         <!-- ... -->
-                        <div class="form-group">
+                        <div class="form-group mt-3 mb-3">
                             <label for="timbre">Timbre:</label>
                             <input type="number" step="0.01" class="form-control" id="timbre" name="timbre" required value="{{ commande.timbre }}">
                         </div>
                         <!-- ... -->
+                        <label for="designation">Désignation:</label>
                         {% for commandeMateriel in commande.commandeMateriels %}
                             <div class="materielSelectContainer row">
-                                <div class="col-md-4">
+                                <div class="col-md-4 mt-1">
                                     <select class="form-control materielSelect" name="materiel[]" required>
                                         <option value="">Choisir un materiel</option>
                                         {% for materiel in materiels %}
@@ -63,10 +59,10 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-2 mt-1">
                                     <input type="number" class="form-control quantityInput" name="quantity[]" placeholder="Qte" min="0" required value="{{ commandeMateriel.qte }}">
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-2 mt-1">
                                     <input type="number" class="form-control priceInput" name="price[]" placeholder="Prix" min="0" required value="{{ commandeMateriel.prix }}">
                                 </div>
                             </div>
@@ -80,28 +76,11 @@
                             </div>
                         </div>
                     </form>
-
-                </div>
-
-
-
-
-
-
-
-
-                  </div>
-                </div>
-              </div>
-          <!-- content-wrapper ends -->
+          </div>
         </div>
-        <!-- main-panel ends -->
       </div>
-      <!-- page-body-wrapper ends -->
-    </div>
 
 
-<!-- Button trigger modal -->
 
     
 
@@ -126,14 +105,40 @@ document.getElementById('addMateriel').addEventListener('click', function() {
     document.getElementById('materielContainer').appendChild(newSelectContainer);
 });
 
+// Create an array to keep track of the removed materiel IDs
+var removedMaterielIds = [];
+
 document.getElementById('removeMateriel').addEventListener('click', function() {
     // Get all select containers
     var selectContainers = document.querySelectorAll('.materielSelectContainer');
 
     // Remove the last select container if there is more than one
     if (selectContainers.length > 1) {
+        // Get the materiel ID of the last select container
+        var lastMaterielSelect = selectContainers[selectContainers.length - 1].querySelector('.materielSelect');
+        var lastMaterielId = lastMaterielSelect.value;
+
+        // Add the materiel ID to the removedMaterielIds array
+        removedMaterielIds.push(lastMaterielId);
+
+        // Remove the last select container
         selectContainers[selectContainers.length - 1].remove();
     }
+});
+
+// When the form is submitted, send the removedMaterielIds array to the server
+document.getElementById('commandForm').addEventListener('submit', function() {
+    // Convert the removedMaterielIds array to a string
+    var removedMaterielIdsString = removedMaterielIds.join(',');
+
+    // Create a new hidden input field and set its value to the removedMaterielIdsString
+    var hiddenInput = document.createElement('input');
+    hiddenInput.type = 'hidden';
+    hiddenInput.name = 'removedMaterielIds';
+    hiddenInput.value = removedMaterielIdsString;
+
+    // Append the hidden input field to the form
+    this.appendChild(hiddenInput);
 });
 </script>
 

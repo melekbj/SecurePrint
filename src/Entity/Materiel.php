@@ -34,7 +34,7 @@ class Materiel
     #[ORM\Column(length: 255,unique:true,nullable:true)]
     private ?string $reference = null;
 
-    #[ORM\OneToMany(mappedBy: 'materiel', targetEntity: CommandeMateriel::class, cascade: ["remove"])]
+    #[ORM\OneToMany(mappedBy: 'materiel', targetEntity: CommandeMateriel::class)]
     private Collection $commandeMateriels;
     
 

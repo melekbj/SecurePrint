@@ -107,18 +107,29 @@ class AdminController extends AbstractController
     #[Route('/deleteM/{id}', name: 'app_delete_materiel')]
     public function deleteM($id, MaterielRepository $rep, PersistenceManagerRegistry $doctrine ): Response
     {
-
         //recuperer la classe a supprimer
         $materiels = $rep->find($id);
         $rep=$doctrine->getManager();
+
+        // Get the CommandeMateriel entities that reference the Materiel
+        $commandeMateriels = $materiels->getCommandeMateriels();
+
+        // Remove the CommandeMateriel entities and their associated Commande
+        foreach ($commandeMateriels as $commandeMateriel) {
+            $commande = $commandeMateriel->getCommande();
+            $rep->remove($commandeMateriel);
+            $rep->remove($commande);
+        }
+
         //supprimer la classe        
         $rep->remove($materiels);
         $rep->flush();
         //flash message
         $this->addFlash('success', 'Materiel supprimé!');
         return $this->redirectToRoute('app_stock'); 
-        
     }
+
+
 
     
 
@@ -612,18 +623,36 @@ class AdminController extends AbstractController
             $quantities = $formData['quantity'];
             $prices = $formData['price'];
 
-            // Remove the existing CommandeMateriel entities
-            foreach ($commande->getCommandeMateriels() as $commandeMateriel) {
-                $doctrine->getManager()->remove($commandeMateriel);
+            // Get the existing CommandeMateriel entities
+            $existingCommandeMateriels = $doctrine->getRepository(CommandeMateriel::class)->findBy(['commande' => $commande]);
+
+            foreach ($existingCommandeMateriels as $existingCommandeMateriel) {
+                // Check if the existing CommandeMateriel entity is in the form data
+                if (!in_array($existingCommandeMateriel->getMateriel()->getId(), $materielIds)) {
+                    // If it's not in the form data, remove it
+                    $doctrine->getManager()->remove($existingCommandeMateriel);
+                }
             }
 
-            // Create new CommandeMateriel entities and set their properties
+            
+
             foreach ($materielIds as $index => $materielId) {
                 $materiel = $doctrine->getRepository(Materiel::class)->find($materielId);
 
-                $commandeMateriel = new CommandeMateriel();
-                $commandeMateriel->setCommande($commande);
-                $commandeMateriel->setMateriel($materiel);
+                // Check if a CommandeMateriel entity already exists
+                $commandeMateriel = $doctrine->getRepository(CommandeMateriel::class)->findOneBy([
+                    'commande' => $commande,
+                    'materiel' => $materiel,
+                ]);
+
+                // If it doesn't exist, create a new one
+                if (!$commandeMateriel) {
+                    $commandeMateriel = new CommandeMateriel();
+                    $commandeMateriel->setCommande($commande);
+                    $commandeMateriel->setMateriel($materiel);
+                }
+
+                // Set or update the properties
                 $commandeMateriel->setQte($quantities[$index]);
                 $commandeMateriel->setPrix($prices[$index]);
                 $commandeMateriel->setTva(19);
@@ -633,11 +662,33 @@ class AdminController extends AbstractController
                 $doctrine->getManager()->persist($commandeMateriel);
             }
 
+            $removedMaterielIdsString = $request->request->get('removedMaterielIds');
+            $removedMaterielIds = explode(',', $removedMaterielIdsString);
+
+            foreach ($removedMaterielIds as $removedMaterielId) {
+                // Find the CommandeMateriel entity
+                $commandeMateriel = $doctrine->getRepository(CommandeMateriel::class)->findOneBy([
+                    'commande' => $commande,
+                    'materiel' => $removedMaterielId,
+                ]);
+
+                // If the CommandeMateriel entity exists, remove it
+                if ($commandeMateriel) {
+                    $doctrine->getManager()->remove($commandeMateriel);
+                }
+            }
+
             // Flush the changes to the database
             $doctrine->getManager()->flush();
 
-            $this->addFlash('success', 'Commande updated successfully');
-            return $this->redirectToRoute('app_liste_commandes');
+            $this->addFlash('success', 'Commande mise à jour avec succès');
+
+            // Check the type of the Commande and redirect accordingly
+            if ($commande->getType() === 'devis') {
+                return $this->redirectToRoute('app_liste_devis');
+            } else if ($commande->getType() === 'facture') {
+                return $this->redirectToRoute('app_liste_factures');
+            }
         }
 
         return $this->render('admin/commandes/editCommande.html.twig', [
@@ -646,6 +697,7 @@ class AdminController extends AbstractController
             'materiels' => $materiels,
         ]);
     }
+
 
 
 
