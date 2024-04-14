@@ -123,8 +123,11 @@
 
                         </div>
                     </div>
-
-                <a class=" mb-5 btn btn-success" href="{{path('generate_pdf',{'clientId':client.id, 'commandId':commande.id})}}">Imprimer devis</a>
+                {% if commande.type == 'devis' %}
+                <a class=" mb-5 btn btn-success" href="{{path('generate_pdf',{'clientId':client.id, 'commandId':commande.id})}}">Imprimer Devis</a>
+				{% elseif commande.type == 'facture' %}
+                <a class=" mb-5 btn btn-success" href="{{path('generate_pdf',{'clientId':client.id, 'commandId':commande.id})}}">Imprimer Facture</a>
+				{% endif %}
 
             </div>
         </div>

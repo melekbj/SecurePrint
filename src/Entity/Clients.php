@@ -28,7 +28,7 @@ class Clients
     #[ORM\Column(length: 255)]
     private ?string $phone = null;
 
-    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Commande::class)]
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Commande::class, cascade:['remove'])]
     private Collection $commandes;
 
     public function __construct()
