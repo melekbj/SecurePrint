@@ -45,8 +45,8 @@
                 {% endfor %}
 
                 {% if commandes is not empty %}
-                    <table class="table table-responsive-lg table-striped table-bordered">
-                        <thead class="thead-dark">
+                    <table class="table table-responsive-lg  table-bordered">
+                        <thead style ="background-color:#5D87FF;color:white;" class="">
                             <tr>
                                 <th>Client</th>
                                 <th>Code</th>
@@ -79,7 +79,7 @@
                                         {% if loop.first %}
                                             <td rowspan="{{ numRows }}">{{ item.date | date('d-m-Y') }}</td>
                                             <td rowspan="{{ numRows }}">
-                                                <li><a type="submit" class="btn btn-info" href="{{path('app_detail_commande',{'id':item.id})}}"> Detail commande</a></li>
+                                                <li><a type="submit" class="btn btn-warning" href="{{path('app_detail_commande',{'id':item.id})}}"> Detail commande</a></li>
                                             </td>
                                             <td rowspan="{{ numRows }}">
                                                 <div class="dropdown">

@@ -31,12 +31,12 @@
                     
                     <div class="">
                         <table class="table table-bordered table-hover">
-                            <thead class="thead-dark">
+                            <thead style ="background-color:#5D87FF;color:white;">
                                 <tr>
                                     <th>Nom et Prenom</th>
-                                    <th>adresse</th>
-                                    <th>ville</th>
-                                    <th>phone</th>
+                                    <th>Adresse</th>
+                                    <th>Ville</th>
+                                    <th>Téléphone</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -55,7 +55,7 @@
                                                 <ul class="dropdown-menu" aria-labelledby="actionsDropdown">
                                                     <li><a class="dropdown-item" href="{{path('app_edit_client',{'id':c.id})}}"><i class="fas fa-edit"></i> Modifier</a></li>
                                                     <li><a onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur?')" class="dropdown-item" href="{{path('app_delete_client',{'id':c.id})}}"><i class="fas fa-trash-alt"></i> Supprimer</a></li>
-                                                    <li><a class="dropdown-item" href="{{path('app_more',{'id':c.id})}}">More ..</a></li>
+                                                    <li><a class="dropdown-item" href="{{path('app_more',{'id':c.id})}}">Plus ...</a></li>
                                                 </ul>
                                             </div>
                                         </td>

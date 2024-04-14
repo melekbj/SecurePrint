@@ -2,21 +2,21 @@
 
 
 {% block body %}
+
+<div class="container-fluid">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title fw-semibold mb-4">Détails sur la commande N. <span class=" text-primary">{{commande.code}}</span> </h5>
+            <p class="mb-0"><i>Date : {{ commande.date | date('d/m/Y') }}</i> </p>
+          </div>
+        </div>
+      </div>
    <div class="container-scroller">
     <div class="container-fluid page-body-wrapper">
         <div class="main-panel col-lg-12">
             <div class="content-wrapper">
-                <h3 class="text-center text-github font-weight-bold my-4">Détails de la commande N. {{commande.code}} </h3>
-                <h5 class=" text-github text-primary"> <i>Date : {{ commande.date | date('d/m/Y') }}</i></h5>
-                {% for message in app.flashes('success') %}
-                    <div class="alert alert-success">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-
-                
-                    <table class="table table-striped table-bordered">
-                        <thead class="thead-dark">
+                    <table class="table table-bordered">
+                        <thead style ="background-color:#5D87FF;color:white;">
                             <tr>
                                 <th>Client</th>
                                 <th>Code</th>

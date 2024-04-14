@@ -2,7 +2,17 @@
 
 
 {% block body %}
-   <div class="container-scroller">
+
+  <div class="container-fluid">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title fw-semibold mb-4">Informations sur le client</h5>
+            {# <p class="mb-0">This is a sample page </p> #}
+          </div>
+        </div>
+      </div>
+
+    <div class="container-scroller">
       <div class="container-fluid page-body-wrapper ">
         <div class="main-panel col-lg-12">
         <div class="d-flex justify-content-end">
@@ -11,44 +21,32 @@
             <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title"><span class="text-danger">Informations sur le client</span></h4>
-                    </p>
                     <table class="table table-striped">
-  <thead>
-    <tr>
-      <th> Id </th>
-      <th> Nom </th>
-      <th> adresse </th>
-      <th> ville </th>
-      <th> phone </th>
-      <th> Commandes </th> <!-- New column for commandes -->
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td class="py-1">
-        {{client.id}}
-      </td>
-      <td> {{client.nomprenom}} </td>
-      <td> {{client.adresse }} </td>
-      <td> {{client.ville}} </td>
-      <td> {{client.phone}} </td>
-      <td>
-        <a href="{{ path('app_commandes', {'id': client.id}) }}" class="btn btn-primary">Voir les commandes</a> <!-- New column data for commandes -->
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-
-                    {# <h5><span class="text-success">Id :</span> {{client.id}}</h5>
-                    <h5><span class="text-success">Nom :</span> {{client.nomprenom}}</h5>
-                    <h5><span class="text-success">Adresse :</span> {{client.adresse}}</h5>
-                    <h5><span class="text-success">Ville :</span> {{client.ville}}</h5>
-                    <h5><span class="text-success">Phone :</span> {{client.phone}}</h5>
-                    <div class="mt-5">        
-                        <a href="{{path('generate_pdf',{'id':client.id})}}" class="btn btn-primary">Imprimer devis</a>
-                    </div> #}
+                      <thead style ="background-color:#5D87FF;color:white;">
+                        <tr>
+                          {# <th> Id </th> #}
+                          <th> Nom </th>
+                          <th> Adresse </th>
+                          <th> ville </th>
+                          <th> Téléphone </th>
+                          <th> Commandes </th> <!-- New column for commandes -->
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          {# <td class="py-1">
+                            {{client.id}}
+                          </td> #}
+                          <td> {{client.nomprenom}} </td>
+                          <td> {{client.adresse }} </td>
+                          <td> {{client.ville}} </td>
+                          <td> {{client.phone}} </td>
+                          <td>
+                            <a href="{{ path('app_commandes', {'id': client.id}) }}" class="btn btn-warning">Voir les commandes</a> <!-- New column data for commandes -->
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>

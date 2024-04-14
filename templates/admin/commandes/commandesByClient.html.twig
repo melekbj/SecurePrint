@@ -2,6 +2,16 @@
 
 
 {% block body %}
+    <div class="container-fluid">
+        <div class="card">
+          <div class="card-body">
+
+            <h2 class=" text-github font-weight-bold my-4">Les commandes de <span class=" text-primary">{{client.nomprenom}}</span></h2>          
+          </div>
+        </div>
+      </div>
+
+
   <div class="container-scroller">
     <div class="container-fluid page-body-wrapper">
         <div class="main-panel col-lg-12">
@@ -9,7 +19,7 @@
                 {# <a class="btn btn-primary" href="{{path('app_ajout_commande')}}">Ajouter commande +</a> #}
             </div>
             <div class="content-wrapper">
-                <h3 class="text-center text-github font-weight-bold my-4">Liste des commandes</h3>
+                {# <h3 class="text-center text-github font-weight-bold my-4">Liste des commandes </h3> #}
 
                 {% for message in app.flashes('success') %}
                     <div class="alert alert-success">
@@ -54,7 +64,7 @@
                                             <td rowspan="{{ numRows }}">{{ item.timbre }}</td>
                                             <td rowspan="{{ numRows }}">{{ item.date | date('d-m-Y') }}</td>
                                             <td rowspan="{{ numRows }}">
-                                                <li><a type="submit" class="btn btn-info" href="{{path('app_detail_commande',{'id':item.id})}}"> Detail commande</a></li>
+                                                <li><a type="submit" class="btn btn-warning" href="{{path('app_detail_commande',{'id':item.id})}}"> Detail commande</a></li>
                                             </td>
                                             <td rowspan="{{ numRows }}">
                                                 <div class="dropdown">

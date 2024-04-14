@@ -8,7 +8,7 @@
         <!-- favicon -->
         <link rel="icon" href="{{ asset('assetsA/images/logo.png')}}" type="image/gif" />
        
-        <title>{% block title %}Welcome Admin{% endblock %}</title>
+        <title>{% block title %}MULTICOM{% endblock %}</title>
 
       
         {% block stylesheets %}
@@ -78,12 +78,12 @@
                         <span>
                         <i class="ti ti-layout-dashboard"></i>
                         </span>
-                        <span class="hide-menu">Dashboard</span>
+                        <span class="hide-menu">Tableau de bord</span>
                     </a>
                     </li>
                     <li class="nav-small-cap">
                     <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                    <span class="hide-menu">UI COMPONENTS</span>
+                    <span class="hide-menu">MENU</span>
                     </li>
                     
 
@@ -128,12 +128,14 @@
                             <li class="sidebar-item">
                                 <a href="{{path('app_liste_devis')}}" class="sidebar-link">
                                     <i class="mdi mdi-adjust"></i>
+                                    <i class="fa-solid fa-caret-right"></i>
                                     <span class="hide-menu">Devis</span>
                                 </a>
                             </li>
                             <li class="sidebar-item">
                                 <a href="{{path('app_liste_factures')}}" class="sidebar-link">
                                     <i class="mdi mdi-adjust"></i>
+                                    <i class="fa-solid fa-caret-right"></i>
                                     <span class="hide-menu">Factures</span>
                                 </a>
                             </li>
