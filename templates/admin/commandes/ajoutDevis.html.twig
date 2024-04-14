@@ -54,7 +54,7 @@
                                     <label for="materiel">Désignation:</label>
                                     <div id="materielContainer">
                                         <div class="materielSelectContainer row">
-                                            <div class="col-md-6">
+                                            <div class="col-md-6 mt-1">
                                                 <select class="form-control materielSelect" name="materiel[]" required>
                                                     <option value="">Choisir un materiel</option>
                                                     {% for materiel in materiels %}
@@ -62,10 +62,10 @@
                                                     {% endfor %}
                                                 </select>
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-3 mt-1">
                                                 <input type="number" class="form-control quantityInput" name="quantity[]" placeholder="Qte" min="0" required>
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-3 mt-1">
                                                 <input type="number" class="form-control priceInput" name="price[]" placeholder="Prix" min="0" required>
                                             </div>
                                         </div>
