@@ -61,8 +61,8 @@
                         </thead>
                         <tbody>
                             {% for item in commandes %}
-                                {% set numRows = item.commandemateriels|length %}
-                                {% for commande_materiel in item.commandemateriels %}
+                                {% set numRows = item.facturemateriels|length %}
+                                {% for commande_materiel in item.facturemateriels %}
                                     <tr>
                                         {% if loop.first %}
                                             <td rowspan="{{ numRows }}">{{ item.client.nomprenom }}</td>
@@ -78,7 +78,7 @@
                                         {% if loop.first %}
                                             <td rowspan="{{ numRows }}">{{ item.date | date('d-m-Y') }}</td>
                                             <td rowspan="{{ numRows }}">
-                                                <li><a type="submit" class="btn btn-info" href="{{path('app_detail_commande',{'id':item.id})}}"> Detail commande</a></li>
+                                                <li><a type="submit" class="btn btn-info" href="{{path('app_detail_facture',{'id':item.id})}}"> Detail commande</a></li>
                                             </td>
                                             <td rowspan="{{ numRows }}">
                                                 <div class="dropdown">

@@ -30,7 +30,7 @@
 		<br>
 
 				{% if commande.type == 'devis' %}
-					<h2 style="font-size:25px;"> Devis No. 00{{ commande.id }}</h2>
+					<h2 style="font-size:25px;"> Devis No. {{ commande.code }}</h2>
 				{% elseif commande.type == 'facture' %}
 					<h2 style="font-size:25px;"> Fact. Nu : 00{{ commande.id }}</h2>
 				{% endif %}
@@ -81,8 +81,8 @@
                             {% set totalTVA = 0 %}
 
 						 {% set item = commande %}
-							{% set numRows = item.commandemateriels|length %}
-							{% for commande_materiel in item.commandemateriels %}
+							{% set numRows = item.facturemateriels|length %}
+							{% for commande_materiel in item.facturemateriels %}
 								<tr>
                                     {% if loop.first %}
                                         {# <td rowspan="{{ numRows }}">{{ item.client.nomprenom }}</td> #}

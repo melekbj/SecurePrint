@@ -4,16 +4,20 @@ namespace App\Controller;
 
 use Knp\Snappy\Pdf;
 use App\Entity\Clients;
+use App\Entity\Facture;
 use App\Entity\Commande;
 use App\Entity\Materiel;
 use App\Form\ClientType;
 use App\Form\CommandeType;
 use App\Form\MaterielType;
+use App\Entity\FactureMateriel;
 use App\Entity\CommandeMateriel;
 use App\Repository\UserRepository;
 use App\Repository\ClientsRepository;
+use App\Repository\FactureRepository;
 use App\Repository\CommandeRepository;
 use App\Repository\MaterielRepository;
+use App\Repository\FactureMaterielRepository;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\CommandeMaterielRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -318,6 +322,55 @@ class AdminController extends AbstractController
     }
 
 
+
+    #[Route('/generatePdffacture/{clientId}/{commandId}', name: 'generate_pdf_facture')]
+    public function generatePdfFacture(Pdf $snappy, int $clientId, int $commandId, PersistenceManagerRegistry $doctrine)
+    {
+        // Fetch the client details from the database using the ID
+        $entityManager = $doctrine->getManager();
+        $clientRepository = $entityManager->getRepository(Clients::class);
+        $client = $clientRepository->find($clientId);
+
+        if (!$client) {
+            throw $this->createNotFoundException('Client not found with ID: ' . $clientId);
+        }
+
+        $commandes = $entityManager->getRepository(Facture::class)->findAll();
+
+        // Fetch the specific command associated with the client
+        $commandeRepository = $entityManager->getRepository(Facture::class);
+        $commande = $commandeRepository->findOneBy(['id' => $commandId, 'client' => $client]);
+
+        if (!$commande) {
+            throw $this->createNotFoundException('Command not found with ID: ' . $commandId);
+        }
+
+        // Fetch the CommandeMateriel entities associated with the Commande
+        $commandeMaterielRepository = $entityManager->getRepository(FactureMateriel::class);
+        $commandeMateriels = $commandeMaterielRepository->findBy(['facture' => $commande]);
+
+        // Render the Twig template and pass the client details, the command, and the CommandeMateriels
+        $html = $this->renderView('/resources/facture.html.twig', [
+            'client' => $client,
+            'commande' => $commande,
+            'commandes' => $commandes,
+            'commandeMateriels' => $commandeMateriels,
+        ]);
+
+        $pdfContent = $snappy->getOutputFromHtml($html);
+
+        // You can return the PDF as a response
+        return new Response(
+            $pdfContent,
+            200,
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="devis.pdf"',
+            ]
+        );
+    }
+
+
     
     
     #[Route('/liste_commande', name: 'app_liste_commandes')]
@@ -400,9 +453,9 @@ class AdminController extends AbstractController
     public function listFactures(PersistenceManagerRegistry $doctrine, Request $request): Response
     {
         $em = $doctrine->getManager();
-        $commandes = $em->getRepository(Commande::class)->findBy(['type' => 'facture']);
+        $commandes = $em->getRepository(Facture::class)->findBy(['type' => 'facture']);
 
-        $commandeRepository = $doctrine->getRepository(Commande::class);
+        $commandeRepository = $doctrine->getRepository(Facture::class);
 
         $code = $request->query->get('code');
         $date = $request->query->get('date');
@@ -449,6 +502,23 @@ class AdminController extends AbstractController
             
         ]);
     }
+
+    #[Route('/detail_facture/{id}', name: 'app_detail_facture')]
+    public function detailFacture($id, FactureRepository $rep, FactureMaterielRepository $repcm): Response
+    {
+        $commande = $rep->find($id);
+        $client = $commande->getClient(); // Get the client associated with the commande
+        
+        $commandeMaterielRepository = $repcm->findAll();
+        return $this->render('admin/commandes/detailFacture.html.twig', [
+            'commande' => $commande,
+            'client' => $client,
+            'commandeMateriels' => $commandeMaterielRepository,
+            
+        ]);
+    }
+
+
 
 
     //generate ajoutCommande function
@@ -536,7 +606,7 @@ class AdminController extends AbstractController
             $formData = $request->request->all();
 
             // Check if a Commande with the same code already exists
-        $existingCommande = $doctrine->getRepository(Commande::class)->findOneBy(['code' => $formData['code']]);
+        $existingCommande = $doctrine->getRepository(Facture::class)->findOneBy(['code' => $formData['code']]);
         if ($existingCommande) {
             $this->addFlash('error', 'Il y a déjà une commande avec ce code');
             return $this->render('admin/commandes/ajoutCommande.html.twig', [
@@ -546,7 +616,7 @@ class AdminController extends AbstractController
         }
 
             // Create a new Commande entity and set its properties
-            $commande = new Commande();
+            $commande = new Facture();
             $commande->setCode($formData['code']);
             $commande->setType('facture');
             $commande->setTimbre($formData['timbre']);
@@ -573,8 +643,8 @@ class AdminController extends AbstractController
                 $materiel = $doctrine->getRepository(Materiel::class)->find($materielId);
     
                 // Create a new CommandeMateriel entity and set its properties
-                $commandeMateriel = new CommandeMateriel();
-                $commandeMateriel->setCommande($commande);
+                $commandeMateriel = new FactureMateriel();
+                $commandeMateriel->setFacture($commande);
                 $commandeMateriel->setMateriel($materiel);
                 $commandeMateriel->setQte($quantities[$index]);
                 $commandeMateriel->setPrix($prices[$index]);
