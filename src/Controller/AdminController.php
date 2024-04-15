@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Repository\CommandeMaterielRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\Persistence\ManagerRegistry as PersistenceManagerRegistry;
 
@@ -25,11 +26,38 @@ use Doctrine\Persistence\ManagerRegistry as PersistenceManagerRegistry;
 class AdminController extends AbstractController
 {
     #[Route('/', name: 'app_admin')]
-    public function index(): Response
+    public function index(PersistenceManagerRegistry $doctrine): Response
     {
+        $em = $doctrine->getManager();
+        $clientRepository = $em->getRepository(Clients::class);
+        $totalClients = $clientRepository->createQueryBuilder('c')
+            ->select('count(c.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
         return $this->render('admin/index.html.twig', [
             'controller_name' => 'AdminController',
+            'total_clients' => $totalClients,
         ]);
+    }
+
+    #[Route('/admin', name: 'api_chart_data')]
+    public function getChartData(PersistenceManagerRegistry $doctrine): Response
+    {
+        $em = $doctrine->getManager();
+        $clientRepository = $em->getRepository(Clients::class);
+        $totalClients = $clientRepository->createQueryBuilder('c')
+            ->select('count(c.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        // You need to replace this with your actual data
+        $data = [
+            'series' => [$totalClients, /* other data */],
+            'labels' => ['Total Clients', /* other labels */],
+        ];
+
+        return new JsonResponse($data);
     }
     
     #[Route('/liste_des_clients', name: 'app_liste_clients')]

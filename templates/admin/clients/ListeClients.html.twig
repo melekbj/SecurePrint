@@ -33,7 +33,7 @@
                         <table class="table table-bordered table-hover">
                             <thead style ="background-color:#5D87FF;color:white;">
                                 <tr>
-                                    <th>Nom et Prenom</th>
+                                    <th>Nom complet</th>
                                     <th>Adresse</th>
                                     <th>Ville</th>
                                     <th>Téléphone</th>
@@ -91,7 +91,7 @@
       <div class="modal-body">
             {{ form_start(addClient) }}
             <div class="mb-2">
-                {{ form_widget(addClient.nom_prenom, {'attr': {'class': 'form-control', 'placeholder': 'Nom et Prenom'}}) }}
+                {{ form_widget(addClient.nom_prenom, {'attr': {'class': 'form-control', 'placeholder': 'Nom complet'}}) }}
                 {% if form_errors(addClient.nom_prenom) %}
                     <div class="alert alert-danger">
                         {{ form_errors(addClient.nom_prenom) }}
