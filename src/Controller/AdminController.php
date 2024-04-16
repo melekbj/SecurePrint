@@ -5,21 +5,20 @@ namespace App\Controller;
 use Knp\Snappy\Pdf;
 use App\Entity\Clients;
 use App\Entity\Facture;
-use App\Entity\Commande;
+use App\Entity\Devi;
 use App\Entity\Materiel;
 use App\Form\ClientType;
-use App\Form\CommandeType;
 use App\Form\MaterielType;
 use App\Entity\FactureMateriel;
-use App\Entity\CommandeMateriel;
+use App\Entity\DeviMateriel;
 use App\Repository\UserRepository;
 use App\Repository\ClientsRepository;
 use App\Repository\FactureRepository;
-use App\Repository\CommandeRepository;
+use App\Repository\DeviRepository;
 use App\Repository\MaterielRepository;
 use App\Repository\FactureMaterielRepository;
 use Symfony\Component\HttpFoundation\Request;
-use App\Repository\CommandeMaterielRepository;
+use App\Repository\DeviMaterielRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -45,25 +44,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/admin', name: 'api_chart_data')]
-    public function getChartData(PersistenceManagerRegistry $doctrine): Response
-    {
-        $em = $doctrine->getManager();
-        $clientRepository = $em->getRepository(Clients::class);
-        $totalClients = $clientRepository->createQueryBuilder('c')
-            ->select('count(c.id)')
-            ->getQuery()
-            ->getSingleScalarResult();
-
-        // You need to replace this with your actual data
-        $data = [
-            'series' => [$totalClients, /* other data */],
-            'labels' => ['Total Clients', /* other labels */],
-        ];
-
-        return new JsonResponse($data);
-    }
-    
+// .........................................Gestion des clients................................................
     #[Route('/liste_des_clients', name: 'app_liste_clients')]
     public function ListeClients(PersistenceManagerRegistry $doctrine, Request $request): Response
     {
@@ -87,6 +68,27 @@ class AdminController extends AbstractController
             'controller_name' => 'AdminController',
             'users' => $users,  
             'addClient' =>$form->createView(),
+        ]);
+    }
+
+    #[Route('/detail_client/{id}', name: 'app_more')]
+    public function show($id, PersistenceManagerRegistry $doctrine): Response
+    {
+        // Retrieve the client information from the database based on the provided id
+        $client = $doctrine->getRepository(Clients::class)->find($id);
+
+        // Check if the client exists
+        if (!$client) {
+            throw $this->createNotFoundException('Client not found');
+        }
+
+        // Retrieve the commands for this client
+        $commandes = $client->getCommandes();
+
+        // Render the client information and their commands in a template
+        return $this->render('admin/detailClient.html.twig', [
+            'client' => $client,
+            'commandes' => $commandes,
         ]);
     }
 
@@ -134,7 +136,8 @@ class AdminController extends AbstractController
         
     }
 
-   
+// .........................................Gestion des materiels................................................
+
 
     #[Route('/deleteM/{id}', name: 'app_delete_materiel')]
     public function deleteM($id, MaterielRepository $rep, PersistenceManagerRegistry $doctrine ): Response
@@ -144,11 +147,11 @@ class AdminController extends AbstractController
         $rep=$doctrine->getManager();
 
         // Get the CommandeMateriel entities that reference the Materiel
-        $commandeMateriels = $materiels->getCommandeMateriels();
+        $commandeMateriels = $materiels->getDeviMateriels();
 
         // Remove the CommandeMateriel entities and their associated Commande
         foreach ($commandeMateriels as $commandeMateriel) {
-            $commande = $commandeMateriel->getCommande();
+            $commande = $commandeMateriel->getDevi();
             $rep->remove($commandeMateriel);
             $rep->remove($commande);
         }
@@ -161,9 +164,6 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('app_stock'); 
     }
 
-
-
-    
 
     #[Route('/liste_des_materiels', name: 'app_stock')]
     public function stock(PersistenceManagerRegistry $doctrine, Request $request): Response
@@ -217,12 +217,12 @@ class AdminController extends AbstractController
         ]);
     }
 
+
+// .........................................Gestion des devis...............................................
     
 
-    
-    
-    #[Route('/detail_client/{id}', name: 'app_more')]
-    public function show($id, PersistenceManagerRegistry $doctrine): Response
+    #[Route('/devisByClient/{id}', name: 'app_devis')]
+    public function showDevisByClient($id, PersistenceManagerRegistry $doctrine): Response
     {
         // Retrieve the client information from the database based on the provided id
         $client = $doctrine->getRepository(Clients::class)->find($id);
@@ -233,48 +233,250 @@ class AdminController extends AbstractController
         }
 
         // Retrieve the commands for this client
-        $commandes = $client->getCommandes();
-
-        // Render the client information and their commands in a template
-        return $this->render('admin/detailClient.html.twig', [
-            'client' => $client,
-            'commandes' => $commandes,
-        ]);
-    }
-
-    #[Route('/commandes/{id}', name: 'app_commandes')]
-    public function showCommandesByClient($id, PersistenceManagerRegistry $doctrine): Response
-    {
-        // Retrieve the client information from the database based on the provided id
-        $client = $doctrine->getRepository(Clients::class)->find($id);
-
-        // Check if the client exists
-        if (!$client) {
-            throw $this->createNotFoundException('Client not found');
-        }
-
-        // Retrieve the commands for this client
-        $commandes = $client->getCommandes();
+        $commandes = $client->getDevis();
 
         // Fetch the CommandeMateriel entities associated with each Commande
-        $commandeMaterielRepository = $doctrine->getRepository(CommandeMateriel::class);
+        $commandeMaterielRepository = $doctrine->getRepository(DeviMateriel::class);
         $commandeMateriels = [];
         foreach ($commandes as $commande) {
-            $commandeMateriels[$commande->getId()] = $commandeMaterielRepository->findBy(['commande' => $commande]);
+            $commandeMateriels[$commande->getId()] = $commandeMaterielRepository->findBy(['devi' => $commande]);
         }
 
         // Render the client's commands in a template
-        return $this->render('admin/commandes/commandesByClient.html.twig', [
+        return $this->render('admin/devis/devisByClient.html.twig', [
             'commandes' => $commandes,
             'client' => $client,
             'commandeMateriels' => $commandeMateriels,
         ]);
     }
 
+    #[Route('/liste_devis', name: 'app_liste_devis')]
+    public function listDevis(PersistenceManagerRegistry $doctrine, Request $request): Response
+    {
+        $em = $doctrine->getManager();
+        $commandes = $em->getRepository(Devi::class)->findAll();
+
+        $commandeRepository = $doctrine->getRepository(Devi::class);
+
+        $code = $request->query->get('code');
+        $date = $request->query->get('date');
+
+        // 
+
+        return $this->render('admin/devis/listeDevis.html.twig', [ 
+        'commandes' => $commandes,
+        ]);
+    }
+
+    #[Route('/detail_devis/{id}', name: 'app_detail_devis')]
+    public function detailDevis($id, DeviRepository $rep, DeviMaterielRepository $repcm): Response
+    {
+        $commande = $rep->find($id);
+        $client = $commande->getClient(); // Get the client associated with the commande
+        
+        $commandeMaterielRepository = $repcm->findAll();
+        return $this->render('admin/devis/detailDevis.html.twig', [
+            'commande' => $commande,
+            'client' => $client,
+            'commandeMateriels' => $commandeMaterielRepository,
+            
+        ]);
+    }
+
+    #[Route('/ajout_devis', name: 'app_ajout_devis')]
+    public function ajoutDevis(Request $request, PersistenceManagerRegistry $doctrine): Response
+    {
+
+        $clients = $doctrine->getRepository(Clients::class)->findAll();
+        $materiels = $doctrine->getRepository(Materiel::class)->findAll();
+
+        if ($request->isMethod('POST')) {
+            // Get the submitted data
+            $formData = $request->request->all();
+
+            // Check if a Commande with the same code already exists
+        $existingCommande = $doctrine->getRepository(Devi::class)->findOneBy(['code' => $formData['code']]);
+        if ($existingCommande) {
+            $this->addFlash('error', 'Il y a déjà une commande avec ce code');
+            return $this->render('admin/devis/ajoutDevis.html.twig', [
+                'clients' => $clients,
+                'materiels' => $materiels,
+            ]);
+        }
+
+            // Create a new Commande entity and set its properties
+            $commande = new Devi();
+            $commande->setCode($formData['code']);
+            $commande->setTimbre($formData['timbre']);
+            $commande->setDate(new \DateTime($formData['date']));
+            
+
+            // Get the Client entity from the form data
+            $clientId = $formData['client'];
+            $client = $doctrine->getRepository(Clients::class)->find($clientId);
+            $commande->setClient($client);
+
+            // Persist the Commande entity
+            $entityManager = $doctrine->getManager();
+            $entityManager->persist($commande);
+
+            // Get the Materiel entity from the form data
+            $materielIds = $formData['materiel'];
+            $quantities = $formData['quantity'];
+            $prices = $formData['price'];
+            // $tva = $formData['tva'];
+            // $remise = $formData['remise'];
+
+            foreach ($materielIds as $index => $materielId) {
+                $materiel = $doctrine->getRepository(Materiel::class)->find($materielId);
+    
+                // Create a new CommandeMateriel entity and set its properties
+                $commandeMateriel = new DeviMateriel();
+                $commandeMateriel->setDevi($commande);
+                $commandeMateriel->setMateriel($materiel);
+                $commandeMateriel->setQte($quantities[$index]);
+                $commandeMateriel->setPrix($prices[$index]);
+                $commandeMateriel->setTva(19);
+                $commandeMateriel->setRemise(0);
+    
+                // Persist the CommandeMateriel entity
+                $entityManager->persist($commandeMateriel);
+            }
+
+            $entityManager->flush();
+            $this->addFlash('success', 'Commande added successfully');
+            return $this->redirectToRoute('app_liste_devis');
+        }
+        return $this->render('admin/devis/ajoutDevis.html.twig', [
+            'clients' => $clients,
+            'materiels' => $materiels,
+        
+        ]);
+    }
+
+    #[Route('/delete_devis/{id}', name: 'app_delete_devis')]
+    public function deleteDevis($id, DeviRepository $rep, PersistenceManagerRegistry $doctrine): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $commande = $rep->find($id);
+
+        // Check if the commande exists
+        if (!$commande) {
+            throw $this->createNotFoundException('No commande found for id '.$id);
+        }
+
+        // Remove associated CommandeMateriel entities
+        foreach ($commande->getDeviMateriels() as $commandeMateriel) {
+            $entityManager->remove($commandeMateriel);
+        }
+
+        // Now remove the Commande entity
+        $entityManager->remove($commande);
+        $entityManager->flush();
+
+        // Flash message
+        $this->addFlash('success', 'Commande removed!');
+        return $this->redirectToRoute('app_liste_commandes');
+    }
 
 
+    #[Route('/edit_devis/{id}', name: 'app_update_devis')]
+    public function editDevi(Request $request, PersistenceManagerRegistry $doctrine, Devi $commande): Response
+    {
+        $clients = $doctrine->getRepository(Clients::class)->findAll();
+        $materiels = $doctrine->getRepository(Materiel::class)->findAll();
 
-    #[Route('/generatePdf/{clientId}/{commandId}', name: 'generate_pdf')]
+        if ($request->isMethod('POST')) {
+            // Get the submitted data
+            $formData = $request->request->all();
+
+            // Set the Commande entity's properties
+            $commande->setCode($formData['code']);
+            $commande->setTimbre($formData['timbre']);
+            $commande->setDate(new \DateTime($formData['date']));
+
+            // Get the Client entity from the form data
+            $clientId = $formData['client'];
+            $client = $doctrine->getRepository(Clients::class)->find($clientId);
+            $commande->setClient($client);
+
+            // Get the Materiel entity from the form data
+            $materielIds = $formData['materiel'];
+            $quantities = $formData['quantity'];
+            $prices = $formData['price'];
+
+            // Get the existing CommandeMateriel entities
+            $existingCommandeMateriels = $doctrine->getRepository(DeviMateriel::class)->findBy(['devi' => $commande]);
+
+            foreach ($existingCommandeMateriels as $existingCommandeMateriel) {
+                // Check if the existing CommandeMateriel entity is in the form data
+                if (!in_array($existingCommandeMateriel->getMateriel()->getId(), $materielIds)) {
+                    // If it's not in the form data, remove it
+                    $doctrine->getManager()->remove($existingCommandeMateriel);
+                }
+            }
+
+            
+
+            foreach ($materielIds as $index => $materielId) {
+                $materiel = $doctrine->getRepository(Materiel::class)->find($materielId);
+
+                // Check if a CommandeMateriel entity already exists
+                $commandeMateriel = $doctrine->getRepository(DeviMateriel::class)->findOneBy([
+                    'devi' => $commande,
+                    'materiel' => $materiel,
+                ]);
+
+                // If it doesn't exist, create a new one
+                if (!$commandeMateriel) {
+                    $commandeMateriel = new DeviMateriel();
+                    $commandeMateriel->setDevi($commande);
+                    $commandeMateriel->setMateriel($materiel);
+                }
+
+                // Set or update the properties
+                $commandeMateriel->setQte($quantities[$index]);
+                $commandeMateriel->setPrix($prices[$index]);
+                $commandeMateriel->setTva(19);
+                $commandeMateriel->setRemise(0);
+
+                // Persist the CommandeMateriel entity
+                $doctrine->getManager()->persist($commandeMateriel);
+            }
+
+            $removedMaterielIdsString = $request->request->get('removedMaterielIds');
+            $removedMaterielIds = explode(',', $removedMaterielIdsString);
+
+            foreach ($removedMaterielIds as $removedMaterielId) {
+                // Find the CommandeMateriel entity
+                $commandeMateriel = $doctrine->getRepository(DeviMateriel::class)->findOneBy([
+                    'devi' => $commande,
+                    'materiel' => $removedMaterielId,
+                ]);
+
+                // If the CommandeMateriel entity exists, remove it
+                if ($commandeMateriel) {
+                    $doctrine->getManager()->remove($commandeMateriel);
+                }
+            }
+
+            // Flush the changes to the database
+            $doctrine->getManager()->flush();
+
+            $this->addFlash('success', 'Commande mise à jour avec succès');
+
+            return $this->redirectToRoute('app_liste_devis');
+        }
+
+        return $this->render('admin/devis/editDevis.html.twig', [
+            'commande' => $commande,
+            'clients' => $clients,
+            'materiels' => $materiels,
+        ]);
+    }
+
+
+    #[Route('/generatePdf/{clientId}/{commandId}', name: 'generate_pdf_devis')]
     public function generatePdf(Pdf $snappy, int $clientId, int $commandId, PersistenceManagerRegistry $doctrine)
     {
         // Fetch the client details from the database using the ID
@@ -286,10 +488,10 @@ class AdminController extends AbstractController
             throw $this->createNotFoundException('Client not found with ID: ' . $clientId);
         }
 
-        $commandes = $entityManager->getRepository(Commande::class)->findAll();
+        $commandes = $entityManager->getRepository(Devi::class)->findAll();
 
         // Fetch the specific command associated with the client
-        $commandeRepository = $entityManager->getRepository(Commande::class);
+        $commandeRepository = $entityManager->getRepository(Devi::class);
         $commande = $commandeRepository->findOneBy(['id' => $commandId, 'client' => $client]);
 
         if (!$commande) {
@@ -297,8 +499,8 @@ class AdminController extends AbstractController
         }
 
         // Fetch the CommandeMateriel entities associated with the Commande
-        $commandeMaterielRepository = $entityManager->getRepository(CommandeMateriel::class);
-        $commandeMateriels = $commandeMaterielRepository->findBy(['commande' => $commande]);
+        $commandeMaterielRepository = $entityManager->getRepository(DeviMateriel::class);
+        $commandeMateriels = $commandeMaterielRepository->findBy(['devi' => $commande]);
 
         // Render the Twig template and pass the client details, the command, and the CommandeMateriels
         $html = $this->renderView('/resources/devis.html.twig', [
@@ -319,6 +521,234 @@ class AdminController extends AbstractController
                 'Content-Disposition' => 'attachment; filename="devis.pdf"',
             ]
         );
+    }
+
+
+// .........................................Gestion des factures...............................................
+
+
+    #[Route('/liste_factures', name: 'app_liste_factures')]
+    public function listFactures(PersistenceManagerRegistry $doctrine, Request $request): Response
+    {
+        $em = $doctrine->getManager();
+        $commandes = $em->getRepository(Facture::class)->findAll();
+
+        $commandeRepository = $doctrine->getRepository(Facture::class);
+
+       
+
+        return $this->render('admin/factures/listeFactures.html.twig', [ 
+        'commandes' => $commandes,
+        ]);
+    }
+
+
+    #[Route('/detail_facture/{id}', name: 'app_detail_facture')]
+    public function detailFacture($id, FactureRepository $rep, FactureMaterielRepository $repcm): Response
+    {
+        $commande = $rep->find($id);
+        $client = $commande->getClient(); // Get the client associated with the commande
+        
+        $commandeMaterielRepository = $repcm->findAll();
+        return $this->render('admin/factures/detailFacture.html.twig', [
+            'commande' => $commande,
+            'client' => $client,
+            'commandeMateriels' => $commandeMaterielRepository,
+            
+        ]);
+    }
+
+    
+    #[Route('/ajout_facture', name: 'app_ajout_facture')]
+    public function ajoutFacture(Request $request, PersistenceManagerRegistry $doctrine): Response
+    {
+
+        $clients = $doctrine->getRepository(Clients::class)->findAll();
+        $materiels = $doctrine->getRepository(Materiel::class)->findAll();
+
+        if ($request->isMethod('POST')) {
+            // Get the submitted data
+            $formData = $request->request->all();
+
+            // Check if a Commande with the same code already exists
+        $existingCommande = $doctrine->getRepository(Facture::class)->findOneBy(['code' => $formData['code']]);
+        if ($existingCommande) {
+            $this->addFlash('error', 'Il y a déjà une commande avec ce code');
+            return $this->render('admin/factures/ajoutFacture.html.twig', [
+                'clients' => $clients,
+                'materiels' => $materiels,
+            ]);
+        }
+
+            // Create a new Commande entity and set its properties
+            $commande = new Facture();
+            $commande->setCode($formData['code']);
+            $commande->setTimbre($formData['timbre']);
+            $commande->setDate(new \DateTime($formData['date']));
+            
+
+            // Get the Client entity from the form data
+            $clientId = $formData['client'];
+            $client = $doctrine->getRepository(Clients::class)->find($clientId);
+            $commande->setClient($client);
+
+            // Persist the Commande entity
+            $entityManager = $doctrine->getManager();
+            $entityManager->persist($commande);
+
+            // Get the Materiel entity from the form data
+            $materielIds = $formData['materiel'];
+            $quantities = $formData['quantity'];
+            $prices = $formData['price'];
+            // $tva = $formData['tva'];
+            // $remise = $formData['remise'];
+
+            foreach ($materielIds as $index => $materielId) {
+                $materiel = $doctrine->getRepository(Materiel::class)->find($materielId);
+    
+                // Create a new CommandeMateriel entity and set its properties
+                $commandeMateriel = new FactureMateriel();
+                $commandeMateriel->setFacture($commande);
+                $commandeMateriel->setMateriel($materiel);
+                $commandeMateriel->setQte($quantities[$index]);
+                $commandeMateriel->setPrix($prices[$index]);
+                $commandeMateriel->setTva(19);
+                $commandeMateriel->setRemise(0);
+    
+                // Persist the CommandeMateriel entity
+                $entityManager->persist($commandeMateriel);
+            }
+
+            $entityManager->flush();
+            $this->addFlash('success', 'Commande added successfully');
+            return $this->redirectToRoute('app_liste_factures');
+        }
+        return $this->render('admin/factures/ajoutFacture.html.twig', [
+            'clients' => $clients,
+            'materiels' => $materiels,
+        
+        ]);
+    }
+
+    #[Route('/delete_facture/{id}', name: 'app_delete_facture')]
+    public function deleteFacture($id, FactureRepository $rep, PersistenceManagerRegistry $doctrine): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $commande = $rep->find($id);
+
+        // Check if the commande exists
+        if (!$commande) {
+            throw $this->createNotFoundException('No commande found for id '.$id);
+        }
+
+        // Remove associated CommandeMateriel entities
+        foreach ($commande->getDeviMateriels() as $commandeMateriel) {
+            $entityManager->remove($commandeMateriel);
+        }
+
+        // Now remove the Commande entity
+        $entityManager->remove($commande);
+        $entityManager->flush();
+
+        // Flash message
+        $this->addFlash('success', 'Facture supprimée!');
+        return $this->redirectToRoute('app_liste_factures');
+    }
+
+
+    #[Route('/edit_facture/{id}', name: 'app_update_facture')]
+    public function editFacture(Request $request, PersistenceManagerRegistry $doctrine, Facture $commande): Response
+    {
+        $clients = $doctrine->getRepository(Clients::class)->findAll();
+        $materiels = $doctrine->getRepository(Materiel::class)->findAll();
+
+        if ($request->isMethod('POST')) {
+            // Get the submitted data
+            $formData = $request->request->all();
+
+            // Set the Commande entity's properties
+            $commande->setCode($formData['code']);
+            $commande->setTimbre($formData['timbre']);
+            $commande->setDate(new \DateTime($formData['date']));
+
+            // Get the Client entity from the form data
+            $clientId = $formData['client'];
+            $client = $doctrine->getRepository(Clients::class)->find($clientId);
+            $commande->setClient($client);
+
+            // Get the Materiel entity from the form data
+            $materielIds = $formData['materiel'];
+            $quantities = $formData['quantity'];
+            $prices = $formData['price'];
+
+            // Get the existing CommandeMateriel entities
+            $existingCommandeMateriels = $doctrine->getRepository(FactureMateriel::class)->findBy(['facture' => $commande]);
+
+            foreach ($existingCommandeMateriels as $existingCommandeMateriel) {
+                // Check if the existing CommandeMateriel entity is in the form data
+                if (!in_array($existingCommandeMateriel->getMateriel()->getId(), $materielIds)) {
+                    // If it's not in the form data, remove it
+                    $doctrine->getManager()->remove($existingCommandeMateriel);
+                }
+            }
+
+            
+
+            foreach ($materielIds as $index => $materielId) {
+                $materiel = $doctrine->getRepository(Materiel::class)->find($materielId);
+
+                // Check if a CommandeMateriel entity already exists
+                $commandeMateriel = $doctrine->getRepository(FactureMateriel::class)->findOneBy([
+                    'facture' => $commande,
+                    'materiel' => $materiel,
+                ]);
+
+                // If it doesn't exist, create a new one
+                if (!$commandeMateriel) {
+                    $commandeMateriel = new FactureMateriel();
+                    $commandeMateriel->setFacture($commande);
+                    $commandeMateriel->setMateriel($materiel);
+                }
+
+                // Set or update the properties
+                $commandeMateriel->setQte($quantities[$index]);
+                $commandeMateriel->setPrix($prices[$index]);
+                $commandeMateriel->setTva(19);
+                $commandeMateriel->setRemise(0);
+
+                // Persist the CommandeMateriel entity
+                $doctrine->getManager()->persist($commandeMateriel);
+            }
+
+            $removedMaterielIdsString = $request->request->get('removedMaterielIds');
+            $removedMaterielIds = explode(',', $removedMaterielIdsString);
+
+            foreach ($removedMaterielIds as $removedMaterielId) {
+                // Find the CommandeMateriel entity
+                $commandeMateriel = $doctrine->getRepository(FactureMateriel::class)->findOneBy([
+                    'facture' => $commande,
+                    'materiel' => $removedMaterielId,
+                ]);
+
+                // If the CommandeMateriel entity exists, remove it
+                if ($commandeMateriel) {
+                    $doctrine->getManager()->remove($commandeMateriel);
+                }
+            }
+
+            // Flush the changes to the database
+            $doctrine->getManager()->flush();
+
+            $this->addFlash('success', 'Commande mise à jour avec succès');
+
+            return $this->redirectToRoute('app_liste_factures');
+        }
+
+        return $this->render('admin/factures/editFacture.html.twig', [
+            'commande' => $commande,
+            'clients' => $clients,
+            'materiels' => $materiels,
+        ]);
     }
 
 
@@ -365,437 +795,10 @@ class AdminController extends AbstractController
             200,
             [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'attachment; filename="devis.pdf"',
+                'Content-Disposition' => 'attachment; filename="facture.pdf"',
             ]
         );
     }
-
-
-    
-    
-    #[Route('/liste_commande', name: 'app_liste_commandes')]
-    public function listCommande(PersistenceManagerRegistry $doctrine, Request $request): Response
-    {
-        $em = $doctrine->getManager();
-        $commandes = $em->getRepository(Commande::class)->findAll();
-
-        $commandeRepository = $doctrine->getRepository(Commande::class);
-
-        $code = $request->query->get('code');
-        $date = $request->query->get('date');
-
-        // Create the query builder
-        $queryBuilder = $commandeRepository->createQueryBuilder('c');
-
-        // Apply filters
-        
-        if ($code) {
-            $queryBuilder->orWhere('c.code LIKE :code')
-                ->setParameter('code', '%' . $code . '%');
-        }
-
-        if ($date) {
-            $queryBuilder->andWhere('c.date = :date') // Adjust this based on your actual date field name
-                ->setParameter('date', new \DateTime($date));
-        }
-
-        // Get the query
-        $query = $queryBuilder->getQuery();
-
-        // Get the result of the query
-        $commandes = $query->getResult();
-
-
-        return $this->render('admin/commandes/listeCommandes.html.twig', [ 
-            'commandes' => $commandes,
-        ]);
-    }
-
-    #[Route('/liste_devis', name: 'app_liste_devis')]
-    public function listDevis(PersistenceManagerRegistry $doctrine, Request $request): Response
-    {
-        $em = $doctrine->getManager();
-        $commandes = $em->getRepository(Commande::class)->findBy(['type' => 'devis']);
-
-        $commandeRepository = $doctrine->getRepository(Commande::class);
-
-        $code = $request->query->get('code');
-        $date = $request->query->get('date');
-
-        // Create the query builder
-        $queryBuilder = $commandeRepository->createQueryBuilder('c')
-        ->where('c.type = :type')
-        ->setParameter('type', 'devis');
-
-        // Apply filters
-        if ($code) {
-        $queryBuilder->andWhere('c.code LIKE :code')
-            ->setParameter('code', '%' . $code . '%');
-        }
-
-        if ($date) {
-        $queryBuilder->andWhere('c.date = :date') // Adjust this based on your actual date field name
-            ->setParameter('date', new \DateTime($date));
-        }
-
-        // Get the query
-        $query = $queryBuilder->getQuery();
-
-        // Get the result of the query
-        $commandes = $query->getResult();
-
-        return $this->render('admin/commandes/listeDevis.html.twig', [ 
-        'commandes' => $commandes,
-        ]);
-    }
-
-    #[Route('/liste_factures', name: 'app_liste_factures')]
-    public function listFactures(PersistenceManagerRegistry $doctrine, Request $request): Response
-    {
-        $em = $doctrine->getManager();
-        $commandes = $em->getRepository(Facture::class)->findBy(['type' => 'facture']);
-
-        $commandeRepository = $doctrine->getRepository(Facture::class);
-
-        $code = $request->query->get('code');
-        $date = $request->query->get('date');
-
-        // Create the query builder
-        $queryBuilder = $commandeRepository->createQueryBuilder('c')
-        ->where('c.type = :type')
-        ->setParameter('type', 'facture');
-
-        // Apply filters
-        if ($code) {
-        $queryBuilder->andWhere('c.code LIKE :code')
-            ->setParameter('code', '%' . $code . '%');
-        }
-
-        if ($date) {
-        $queryBuilder->andWhere('c.date = :date') // Adjust this based on your actual date field name
-            ->setParameter('date', new \DateTime($date));
-        }
-
-        // Get the query
-        $query = $queryBuilder->getQuery();
-
-        // Get the result of the query
-        $commandes = $query->getResult();
-
-        return $this->render('admin/commandes/listeFactures.html.twig', [ 
-        'commandes' => $commandes,
-        ]);
-    }
-
-
-    #[Route('/detail_commande/{id}', name: 'app_detail_commande')]
-    public function detailCommande($id, CommandeRepository $rep, CommandeMaterielRepository $repcm): Response
-    {
-        $commande = $rep->find($id);
-        $client = $commande->getClient(); // Get the client associated with the commande
-        
-        $commandeMaterielRepository = $repcm->findAll();
-        return $this->render('admin/commandes/detailCommande.html.twig', [
-            'commande' => $commande,
-            'client' => $client,
-            'commandeMateriels' => $commandeMaterielRepository,
-            
-        ]);
-    }
-
-    #[Route('/detail_facture/{id}', name: 'app_detail_facture')]
-    public function detailFacture($id, FactureRepository $rep, FactureMaterielRepository $repcm): Response
-    {
-        $commande = $rep->find($id);
-        $client = $commande->getClient(); // Get the client associated with the commande
-        
-        $commandeMaterielRepository = $repcm->findAll();
-        return $this->render('admin/commandes/detailFacture.html.twig', [
-            'commande' => $commande,
-            'client' => $client,
-            'commandeMateriels' => $commandeMaterielRepository,
-            
-        ]);
-    }
-
-
-
-
-    //generate ajoutCommande function
-    #[Route('/ajout_devis', name: 'app_ajout_devis')]
-    public function ajoutDevis(Request $request, PersistenceManagerRegistry $doctrine): Response
-    {
-
-        $clients = $doctrine->getRepository(Clients::class)->findAll();
-        $materiels = $doctrine->getRepository(Materiel::class)->findAll();
-
-        if ($request->isMethod('POST')) {
-            // Get the submitted data
-            $formData = $request->request->all();
-
-            // Check if a Commande with the same code already exists
-        $existingCommande = $doctrine->getRepository(Commande::class)->findOneBy(['code' => $formData['code']]);
-        if ($existingCommande) {
-            $this->addFlash('error', 'Il y a déjà une commande avec ce code');
-            return $this->render('admin/commandes/ajoutCommande.html.twig', [
-                'clients' => $clients,
-                'materiels' => $materiels,
-            ]);
-        }
-
-            // Create a new Commande entity and set its properties
-            $commande = new Commande();
-            $commande->setCode($formData['code']);
-            $commande->setType('devis');
-            $commande->setTimbre($formData['timbre']);
-            $commande->setDate(new \DateTime($formData['date']));
-            
-
-            // Get the Client entity from the form data
-            $clientId = $formData['client'];
-            $client = $doctrine->getRepository(Clients::class)->find($clientId);
-            $commande->setClient($client);
-
-            // Persist the Commande entity
-            $entityManager = $doctrine->getManager();
-            $entityManager->persist($commande);
-
-            // Get the Materiel entity from the form data
-            $materielIds = $formData['materiel'];
-            $quantities = $formData['quantity'];
-            $prices = $formData['price'];
-            // $tva = $formData['tva'];
-            // $remise = $formData['remise'];
-
-            foreach ($materielIds as $index => $materielId) {
-                $materiel = $doctrine->getRepository(Materiel::class)->find($materielId);
-    
-                // Create a new CommandeMateriel entity and set its properties
-                $commandeMateriel = new CommandeMateriel();
-                $commandeMateriel->setCommande($commande);
-                $commandeMateriel->setMateriel($materiel);
-                $commandeMateriel->setQte($quantities[$index]);
-                $commandeMateriel->setPrix($prices[$index]);
-                $commandeMateriel->setTva(19);
-                $commandeMateriel->setRemise(0);
-    
-                // Persist the CommandeMateriel entity
-                $entityManager->persist($commandeMateriel);
-            }
-
-            $entityManager->flush();
-            $this->addFlash('success', 'Commande added successfully');
-            return $this->redirectToRoute('app_liste_devis');
-        }
-        return $this->render('admin/commandes/ajoutDevis.html.twig', [
-            'clients' => $clients,
-            'materiels' => $materiels,
-        
-        ]);
-    }
-
-    #[Route('/ajout_facture', name: 'app_ajout_facture')]
-    public function ajoutFacture(Request $request, PersistenceManagerRegistry $doctrine): Response
-    {
-
-        $clients = $doctrine->getRepository(Clients::class)->findAll();
-        $materiels = $doctrine->getRepository(Materiel::class)->findAll();
-
-        if ($request->isMethod('POST')) {
-            // Get the submitted data
-            $formData = $request->request->all();
-
-            // Check if a Commande with the same code already exists
-        $existingCommande = $doctrine->getRepository(Facture::class)->findOneBy(['code' => $formData['code']]);
-        if ($existingCommande) {
-            $this->addFlash('error', 'Il y a déjà une commande avec ce code');
-            return $this->render('admin/commandes/ajoutCommande.html.twig', [
-                'clients' => $clients,
-                'materiels' => $materiels,
-            ]);
-        }
-
-            // Create a new Commande entity and set its properties
-            $commande = new Facture();
-            $commande->setCode($formData['code']);
-            $commande->setType('facture');
-            $commande->setTimbre($formData['timbre']);
-            $commande->setDate(new \DateTime($formData['date']));
-            
-
-            // Get the Client entity from the form data
-            $clientId = $formData['client'];
-            $client = $doctrine->getRepository(Clients::class)->find($clientId);
-            $commande->setClient($client);
-
-            // Persist the Commande entity
-            $entityManager = $doctrine->getManager();
-            $entityManager->persist($commande);
-
-            // Get the Materiel entity from the form data
-            $materielIds = $formData['materiel'];
-            $quantities = $formData['quantity'];
-            $prices = $formData['price'];
-            // $tva = $formData['tva'];
-            // $remise = $formData['remise'];
-
-            foreach ($materielIds as $index => $materielId) {
-                $materiel = $doctrine->getRepository(Materiel::class)->find($materielId);
-    
-                // Create a new CommandeMateriel entity and set its properties
-                $commandeMateriel = new FactureMateriel();
-                $commandeMateriel->setFacture($commande);
-                $commandeMateriel->setMateriel($materiel);
-                $commandeMateriel->setQte($quantities[$index]);
-                $commandeMateriel->setPrix($prices[$index]);
-                $commandeMateriel->setTva(19);
-                $commandeMateriel->setRemise(0);
-    
-                // Persist the CommandeMateriel entity
-                $entityManager->persist($commandeMateriel);
-            }
-
-            $entityManager->flush();
-            $this->addFlash('success', 'Commande added successfully');
-            return $this->redirectToRoute('app_liste_factures');
-        }
-        return $this->render('admin/commandes/ajoutFacture.html.twig', [
-            'clients' => $clients,
-            'materiels' => $materiels,
-        
-        ]);
-    }
-
-
-    #[Route('/delete_commande/{id}', name: 'app_delete_commande')]
-    public function deleteCommande($id, CommandeRepository $rep, PersistenceManagerRegistry $doctrine): Response
-    {
-        $entityManager = $doctrine->getManager();
-        $commande = $rep->find($id);
-
-        // Check if the commande exists
-        if (!$commande) {
-            throw $this->createNotFoundException('No commande found for id '.$id);
-        }
-
-        // Remove associated CommandeMateriel entities
-        foreach ($commande->getCommandeMateriels() as $commandeMateriel) {
-            $entityManager->remove($commandeMateriel);
-        }
-
-        // Now remove the Commande entity
-        $entityManager->remove($commande);
-        $entityManager->flush();
-
-        // Flash message
-        $this->addFlash('success', 'Commande removed!');
-        return $this->redirectToRoute('app_liste_commandes');
-    }
-
-      
-
-    //generate updateCommande function
-    #[Route('/edit_commande/{id}', name: 'app_update_commande')]
-    public function editCommande(Request $request, PersistenceManagerRegistry $doctrine, Commande $commande): Response
-    {
-        $clients = $doctrine->getRepository(Clients::class)->findAll();
-        $materiels = $doctrine->getRepository(Materiel::class)->findAll();
-
-        if ($request->isMethod('POST')) {
-            // Get the submitted data
-            $formData = $request->request->all();
-
-            // Set the Commande entity's properties
-            $commande->setCode($formData['code']);
-            $commande->setType($formData['type']);
-            $commande->setTimbre($formData['timbre']);
-            $commande->setDate(new \DateTime($formData['date']));
-
-            // Get the Client entity from the form data
-            $clientId = $formData['client'];
-            $client = $doctrine->getRepository(Clients::class)->find($clientId);
-            $commande->setClient($client);
-
-            // Get the Materiel entity from the form data
-            $materielIds = $formData['materiel'];
-            $quantities = $formData['quantity'];
-            $prices = $formData['price'];
-
-            // Get the existing CommandeMateriel entities
-            $existingCommandeMateriels = $doctrine->getRepository(CommandeMateriel::class)->findBy(['commande' => $commande]);
-
-            foreach ($existingCommandeMateriels as $existingCommandeMateriel) {
-                // Check if the existing CommandeMateriel entity is in the form data
-                if (!in_array($existingCommandeMateriel->getMateriel()->getId(), $materielIds)) {
-                    // If it's not in the form data, remove it
-                    $doctrine->getManager()->remove($existingCommandeMateriel);
-                }
-            }
-
-            
-
-            foreach ($materielIds as $index => $materielId) {
-                $materiel = $doctrine->getRepository(Materiel::class)->find($materielId);
-
-                // Check if a CommandeMateriel entity already exists
-                $commandeMateriel = $doctrine->getRepository(CommandeMateriel::class)->findOneBy([
-                    'commande' => $commande,
-                    'materiel' => $materiel,
-                ]);
-
-                // If it doesn't exist, create a new one
-                if (!$commandeMateriel) {
-                    $commandeMateriel = new CommandeMateriel();
-                    $commandeMateriel->setCommande($commande);
-                    $commandeMateriel->setMateriel($materiel);
-                }
-
-                // Set or update the properties
-                $commandeMateriel->setQte($quantities[$index]);
-                $commandeMateriel->setPrix($prices[$index]);
-                $commandeMateriel->setTva(19);
-                $commandeMateriel->setRemise(0);
-
-                // Persist the CommandeMateriel entity
-                $doctrine->getManager()->persist($commandeMateriel);
-            }
-
-            $removedMaterielIdsString = $request->request->get('removedMaterielIds');
-            $removedMaterielIds = explode(',', $removedMaterielIdsString);
-
-            foreach ($removedMaterielIds as $removedMaterielId) {
-                // Find the CommandeMateriel entity
-                $commandeMateriel = $doctrine->getRepository(CommandeMateriel::class)->findOneBy([
-                    'commande' => $commande,
-                    'materiel' => $removedMaterielId,
-                ]);
-
-                // If the CommandeMateriel entity exists, remove it
-                if ($commandeMateriel) {
-                    $doctrine->getManager()->remove($commandeMateriel);
-                }
-            }
-
-            // Flush the changes to the database
-            $doctrine->getManager()->flush();
-
-            $this->addFlash('success', 'Commande mise à jour avec succès');
-
-            // Check the type of the Commande and redirect accordingly
-            if ($commande->getType() === 'devis') {
-                return $this->redirectToRoute('app_liste_devis');
-            } else if ($commande->getType() === 'facture') {
-                return $this->redirectToRoute('app_liste_factures');
-            }
-        }
-
-        return $this->render('admin/commandes/editCommande.html.twig', [
-            'commande' => $commande,
-            'clients' => $clients,
-            'materiels' => $materiels,
-        ]);
-    }
-
 
 
 

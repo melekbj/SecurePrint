@@ -2,27 +2,27 @@
 
 namespace App\Repository;
 
-use App\Entity\CommandeMateriel;
+use App\Entity\DeviMateriel;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<CommandeMateriel>
+ * @extends ServiceEntityRepository<DeviMateriel>
  *
- * @method CommandeMateriel|null find($id, $lockMode = null, $lockVersion = null)
- * @method CommandeMateriel|null findOneBy(array $criteria, array $orderBy = null)
- * @method CommandeMateriel[]    findAll()
- * @method CommandeMateriel[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method DeviMateriel|null find($id, $lockMode = null, $lockVersion = null)
+ * @method DeviMateriel|null findOneBy(array $criteria, array $orderBy = null)
+ * @method DeviMateriel[]    findAll()
+ * @method DeviMateriel[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CommandeMaterielRepository extends ServiceEntityRepository
+class DeviMaterielRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, CommandeMateriel::class);
+        parent::__construct($registry, DeviMateriel::class);
     }
 
 //    /**
-//     * @return CommandeMateriel[] Returns an array of CommandeMateriel objects
+//     * @return DeviMateriel[] Returns an array of DeviMateriel objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -36,7 +36,7 @@ class CommandeMaterielRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?CommandeMateriel
+//    public function findOneBySomeField($value): ?DeviMateriel
 //    {
 //        return $this->createQueryBuilder('c')
 //            ->andWhere('c.exampleField = :val')

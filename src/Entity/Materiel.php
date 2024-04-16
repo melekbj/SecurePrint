@@ -34,13 +34,17 @@ class Materiel
     #[ORM\Column(length: 255,unique:true,nullable:true)]
     private ?string $reference = null;
 
-    #[ORM\OneToMany(mappedBy: 'materiel', targetEntity: CommandeMateriel::class)]
-    private Collection $commandeMateriels;
+    #[ORM\OneToMany(mappedBy: 'materiel', targetEntity: DeviMateriel::class)]
+    private Collection $deviMateriels;
+
+    #[ORM\OneToMany(mappedBy: 'materiel', targetEntity: FactureMateriel::class)]
+    private Collection $factureMateriels;
     
 
     public function __construct()
     {
-        $this->commandeMateriels = new ArrayCollection();
+        $this->deviMateriels = new ArrayCollection();
+        $this->factureMateriels = new ArrayCollection();
     }
 
 
@@ -86,29 +90,60 @@ class Materiel
     }
 
     /**
-     * @return Collection<int, CommandeMateriel>
+     * @return Collection<int, DeviMateriel>
      */
-    public function getCommandeMateriels(): Collection
+    public function getDeviMateriels(): Collection
     {
-        return $this->commandeMateriels;
+        return $this->deviMateriels;
     }
 
-    public function addCommandeMateriel(CommandeMateriel $commandeMateriel): static
+    public function addDeviMateriel(DeviMateriel $deviMateriel): static
     {
-        if (!$this->commandeMateriels->contains($commandeMateriel)) {
-            $this->commandeMateriels->add($commandeMateriel);
-            $commandeMateriel->setMateriel($this);
+        if (!$this->deviMateriels->contains($deviMateriel)) {
+            $this->deviMateriels->add($deviMateriel);
+            $deviMateriel->setMateriel($this);
         }
 
         return $this;
     }
 
-    public function removeCommandeMateriel(CommandeMateriel $commandeMateriel): static
+    public function removeDeviMateriel(DeviMateriel $deviMateriel): static
     {
-        if ($this->commandeMateriels->removeElement($commandeMateriel)) {
+        if ($this->deviMateriels->removeElement($deviMateriel)) {
             // set the owning side to null (unless already changed)
-            if ($commandeMateriel->getMateriel() === $this) {
-                $commandeMateriel->setMateriel(null);
+            if ($deviMateriel->getMateriel() === $this) {
+                $deviMateriel->setMateriel(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * @return Collection<int, FactureMateriel>
+     */
+    public function getFactureMateriels(): Collection
+    {
+        return $this->factureMateriels;
+    }
+
+    public function addFactureMateriel(FactureMateriel $factureMateriel): static
+    {
+        if (!$this->factureMateriels->contains($factureMateriel)) {
+            $this->factureMateriels->add($factureMateriel);
+            $factureMateriel->setMateriel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFactureMateriel(FactureMateriel $factureMateriel): static
+    {
+        if ($this->factureMateriels->removeElement($factureMateriel)) {
+            // set the owning side to null (unless already changed)
+            if ($factureMateriel->getMateriel() === $this) {
+                $factureMateriel->setMateriel(null);
             }
         }
 

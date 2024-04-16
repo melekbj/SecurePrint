@@ -28,12 +28,15 @@ class Clients
     #[ORM\Column(length: 255)]
     private ?string $phone = null;
 
-    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Commande::class, cascade:['remove'])]
-    private Collection $commandes;
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Devi::class, cascade:['remove'])]
+    private Collection $devis;
+
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Facture::class, cascade:['remove'])]
+    private Collection $factures;
 
     public function __construct()
     {
-        $this->commandes = new ArrayCollection();
+        $this->devis = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -90,32 +93,67 @@ class Clients
     }
 
     /**
-     * @return Collection<int, Commande>
+     * @return Collection<int, Devi>
      */
-    public function getCommandes(): Collection
+    public function getDevis(): Collection
     {
-        return $this->commandes;
+        return $this->devis;
     }
 
-    public function addCommande(Commande $commande): self
+    public function addDevi(Devi $devi): self
     {
-        if (!$this->commandes->contains($commande)) {
-            $this->commandes->add($commande);
-            $commande->setClient($this);
+        if (!$this->devis->contains($devi)) {
+            $this->devis->add($devi);
+            $devi->setClient($this);
         }
 
         return $this;
     }
 
-    public function removeCommande(Commande $commande): self
+    public function removeDevi(Devi $devi): self
     {
-        if ($this->commandes->removeElement($commande)) {
+        if ($this->devis->removeElement($devi)) {
             // set the owning side to null (unless already changed)
-            if ($commande->getClient() === $this) {
-                $commande->setClient(null);
+            if ($devi->getClient() === $this) {
+                $devi->setClient(null);
             }
         }
 
         return $this;
     }
+
+
+    /**
+     * @return Collection<int, Facture>
+     */
+    public function getFactures(): Collection
+    {
+        return $this->factures;
+    }
+
+    public function addFacture(Facture $facture): self
+    {
+        if (!$this->factures->contains($facture)) {
+            $this->factures->add($facture);
+            $facture->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFacture(Facture $facture): self
+    {
+        if ($this->factures->removeElement($facture)) {
+            // set the owning side to null (unless already changed)
+            if ($facture->getClient() === $this) {
+                $facture->setClient(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+
+
 }

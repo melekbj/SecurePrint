@@ -21,9 +21,6 @@ class Facture
     #[ORM\Column(length: 255,unique:true)]
     private ?string $code = null;
 
-    #[ORM\Column(length: 255,unique:false)]
-    private ?string $type = null;
-
     #[ORM\Column(nullable: true, options:["default" => 0])]
     private ?float $remise = null;
 
@@ -58,18 +55,6 @@ class Facture
     public function setCode(string $code): self
     {
         $this->code = $code;
-
-        return $this;
-    }
-
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function setType(string $type): self
-    {
-        $this->type = $type;
 
         return $this;
     }

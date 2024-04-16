@@ -2,16 +2,16 @@
 
 namespace App\Entity;
 
-use App\Repository\CommandeRepository;
+use App\Repository\DeviRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-#[ORM\Entity(repositoryClass: CommandeRepository::class)]
+#[ORM\Entity(repositoryClass: DeviRepository::class)]
 #[UniqueEntity(fields: ['code'], message: 'There is already a command with this code')]
-class Commande
+class Devi
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -20,9 +20,6 @@ class Commande
 
     #[ORM\Column(length: 255,unique:true)]
     private ?string $code = null;
-
-    #[ORM\Column(length: 255,unique:false)]
-    private ?string $type = null;
 
     #[ORM\Column(nullable: true, options:["default" => 0])]
     private ?float $remise = null;
@@ -34,15 +31,15 @@ class Commande
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
-    #[ORM\ManyToOne(inversedBy: 'commandes')]
+    #[ORM\ManyToOne(inversedBy: 'devis')]
     private ?Clients $client = null;
 
-    #[ORM\OneToMany(mappedBy: 'commande', targetEntity: CommandeMateriel::class, cascade:['remove'])]
-    private Collection $commandeMateriels;
+    #[ORM\OneToMany(mappedBy: 'devi', targetEntity: DeviMateriel::class, cascade:['remove'])]
+    private Collection $deviMateriels;
 
     public function __construct()
     {
-        $this->commandeMateriels = new ArrayCollection();
+        $this->deviMateriels = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -61,31 +58,6 @@ class Commande
 
         return $this;
     }
-
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function setType(string $type): self
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
-
-    // public function getTtva(): ?float
-    // {
-    //     return $this->ttva;
-    // }
-
-    // public function setTtva(?float $ttva): self
-    // {
-    //     $this->ttva = $ttva;
-
-    //     return $this;
-    // }
 
     public function getRemise(): ?float
     {
@@ -137,29 +109,29 @@ class Commande
     }
 
     /**
-     * @return Collection<int, CommandeMateriel>
+     * @return Collection<int, DeviMateriel>
      */
-    public function getCommandeMateriels(): Collection
+    public function getDeviMateriels(): Collection
     {
-        return $this->commandeMateriels;
+        return $this->deviMateriels;
     }
 
-    public function addCommandeMateriel(CommandeMateriel $commandeMateriel): static
+    public function addDeviMateriel(DeviMateriel $deviMateriel): static
     {
-        if (!$this->commandeMateriels->contains($commandeMateriel)) {
-            $this->commandeMateriels->add($commandeMateriel);
-            $commandeMateriel->setCommande($this);
+        if (!$this->deviMateriels->contains($deviMateriel)) {
+            $this->deviMateriels->add($deviMateriel);
+            $deviMateriel->setDevi($this);
         }
 
         return $this;
     }
 
-    public function removeCommandeMateriel(CommandeMateriel $commandeMateriel): static
+    public function removeDeviMateriel(DeviMateriel $deviMateriel): static
     {
-        if ($this->commandeMateriels->removeElement($commandeMateriel)) {
+        if ($this->deviMateriels->removeElement($deviMateriel)) {
             // set the owning side to null (unless already changed)
-            if ($commandeMateriel->getCommande() === $this) {
-                $commandeMateriel->setCommande(null);
+            if ($deviMateriel->getDevi() === $this) {
+                $deviMateriel->setDevi(null);
             }
         }
 

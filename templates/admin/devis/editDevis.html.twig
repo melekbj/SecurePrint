@@ -14,15 +14,6 @@
 
                     <form action="" method="post" id="commandForm">
                         <!-- ... -->
-                        <div class="form-group">
-                            <label for="type">Type:</label>
-                            <select class="form-control" id="type" name="type" required>
-                                <option value="devis" {% if commande.type == 'devis' %}selected{% endif %}>Devis</option>
-                                <option value="facture" {% if commande.type == 'facture' %}selected{% endif %}>Facture</option>
-                            </select>
-                        </div>
-                        <!-- ... -->
-                        <!-- ... -->
                         <div class="form-group mt-3">
                             <label for="code">Code:</label>
                             <input type="text" class="form-control" id="code" name="code" required unique value="{{ commande.code }}">
@@ -51,7 +42,7 @@
                         <div id="materielContainer">
                             <label for="materiel">Désignation:</label>
                             <!-- Existing Rows Here -->
-                            {% for commandeMateriel in commande.commandeMateriels %}
+                            {% for commandeMateriel in commande.deviMateriels %}
                             <div class="materielSelectContainer row">
                                 <div class="col-md-4 mt-1">
                                     <select class="form-control materielSelect" name="materiel[]" required>

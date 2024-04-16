@@ -6,7 +6,7 @@
 <div class="container-fluid">
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title fw-semibold mb-4">Détails sur la commande N. <span class=" text-primary">{{commande.code}}</span> </h5>
+            <h5 class="card-title fw-semibold mb-4">Détails sur la facture N. <span class=" text-primary">{{commande.id}}</span> </h5>
             <p class="mb-0"><i>Date : {{ commande.date | date('d/m/Y') }}</i> </p>
           </div>
         </div>
@@ -31,14 +31,14 @@
                         </thead>
                         <tbody>
                             {% set item = commande %} {# assuming 'commande' is the specific command passed from the detailCommande function #}
-                            {% set numRows = item.commandemateriels|length %}
+                            {% set numRows = item.facturemateriels|length %}
 
                             {% set totalHT = 0 %}
                             {% set Remise = 0 %}
                             {% set totalRemise = 0 %}
                             {% set totalTVA = 0 %}
 
-                            {% for commande_materiel in item.commandemateriels %}
+                            {% for commande_materiel in item.facturemateriels %}
                                 <tr>
                                     {% if loop.first %}
                                         <td rowspan="{{ numRows }}">{{ item.client.nomprenom }}</td>
@@ -91,7 +91,7 @@
                                 <tbody>
                                     <tr>
                                         <td>19 %</td>
-                                        <td>{{ totalTVA|number_format(3, '.', ' ') }}</td>
+                                        <td>{{ totalTVA|number_format(0, '.', ',') }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -105,7 +105,7 @@
                                 </tr>
                                 <tr>
                                     <th>Total Remise</th>
-                                    <td>{{ totalRemise|number_format(3, '.', ' ') }}</td>
+                                    <td>{{ totalRemise|number_format(3, '.', ',') }}</td>
                                 </tr>
                                 <tr>
                                     <th>Total TVA</th>
@@ -117,17 +117,15 @@
                                 </tr>
                                 <tr>
                                     <th>Total TTC</th>
-                                    <td>{{ totalTTC|number_format(3, '.', ' ') }}</td>
+                                    <td>{{ totalTTC|number_format(0, '.', ',') }}</td>
                                 </tr>
                             </table>
 
                         </div>
                     </div>
-                {% if commande.type == 'devis' %}
-                <a class=" mb-5 btn btn-success" href="{{path('generate_pdf',{'clientId':client.id, 'commandId':commande.id})}}">Imprimer Devis</a>
-				{% elseif commande.type == 'facture' %}
-                <a class=" mb-5 btn btn-success" href="{{path('generate_pdf',{'clientId':client.id, 'commandId':commande.id})}}">Imprimer Facture</a>
-				{% endif %}
+                
+                <a class=" mb-5 btn btn-success" href="{{path('generate_pdf_facture',{'clientId':client.id, 'commandId':commande.id})}}">Imprimer Devis</a>
+
 
             </div>
         </div>

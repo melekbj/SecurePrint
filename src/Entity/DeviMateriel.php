@@ -2,21 +2,21 @@
 
 namespace App\Entity;
 
-use App\Repository\CommandeMaterielRepository;
+use App\Repository\DeviMaterielRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: CommandeMaterielRepository::class)]
-class CommandeMateriel
+#[ORM\Entity(repositoryClass: DeviMaterielRepository::class)]
+class DeviMateriel
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'commandeMateriels')]
-    private ?Commande $commande = null;
+    #[ORM\ManyToOne(inversedBy: 'deviMateriels')]
+    private ?Devi $devi = null;
 
-    #[ORM\ManyToOne(inversedBy: 'commandeMateriels')]
+    #[ORM\ManyToOne(inversedBy: 'deviMateriels')]
     private ?Materiel $materiel = null;
 
     #[ORM\Column(nullable: true)]
@@ -36,14 +36,14 @@ class CommandeMateriel
         return $this->id;
     }
 
-    public function getCommande(): ?Commande
+    public function getDevi(): ?Devi
     {
-        return $this->commande;
+        return $this->devi;
     }
 
-    public function setCommande(?Commande $commande): static
+    public function setDevi(?Devi $devi): static
     {
-        $this->commande = $commande;
+        $this->devi = $devi;
 
         return $this;
     }

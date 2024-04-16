@@ -2,13 +2,12 @@
 
 
 {% block body %}
-   
 
 <div class="container-fluid">
     <div class="card">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center">
-                <form action="{{ path('app_liste_devis') }}" method="get" class="d-flex">
+                <form action="{{ path('app_liste_factures') }}" method="get" class="d-flex">
                     <div style="margin-right:10px;">
                         <h5 class="mt-2 text-github">
                             <strong>Filtrer par :</strong>
@@ -24,9 +23,9 @@
                     </div>
 
                     <button style="margin-right:10px;" type="submit" class="btn btn-primary ml-3">Filtrer</button>
-                    <a href="{{ path('app_liste_devis') }}" class="btn btn-danger ml-3">Annuler Filtres</a>
+                    <a href="{{ path('app_liste_factures') }}" class="btn btn-danger ml-3">Annuler Filtres</a>
                 </form>
-                <a class="btn btn-primary" href="{{path('app_ajout_devis')}}">Ajouter devis</a>
+                <a class="btn btn-info" href="{{path('app_ajout_facture')}}">Ajouter facture</a>
             </div>
         </div>
     </div>
@@ -36,7 +35,7 @@
     <div class="container-fluid page-body-wrapper">
         <div class="main-panel col-lg-12">
             <div class="content-wrapper">
-                <h1 class="text-center text-github font-weight-bold my-4">Liste des Devis</h1>
+                <h1 class="text-center text-github font-weight-bold my-4">Liste des Factures</h1>
 
                 {% for message in app.flashes('success') %}
                     <div class="alert alert-success">
@@ -45,28 +44,30 @@
                 {% endfor %}
 
                 {% if commandes is not empty %}
-                    <table class="table table-responsive-lg  table-bordered">
-                        <thead style ="background-color:#5D87FF;color:white;" class="">
+                    <table class="table table-bordered">
+                        <thead class="thead-dark">
                             <tr>
                                 <th>Client</th>
+                                <th>Date</th>
                                 <th>Code</th>
                                 <th>Désignation</th>
                                 <th>Qte</th>
                                 <th>PU.H.T</th>
                                 <th>TVA</th>
                                 <th>R%</th>
-                                <th>Date</th>
+                                
                                 <th class=" text-center" colspan="2">Actions</th>
 
                             </tr>
                         </thead>
                         <tbody>
                             {% for item in commandes %}
-                                {% set numRows = item.commandemateriels|length %}
-                                {% for commande_materiel in item.commandemateriels %}
+                                {% set numRows = item.facturemateriels|length %}
+                                {% for commande_materiel in item.facturemateriels %}
                                     <tr>
                                         {% if loop.first %}
                                             <td rowspan="{{ numRows }}">{{ item.client.nomprenom }}</td>
+                                            <td rowspan="{{ numRows }}">{{ item.date | date('d-m-Y') }}</td>
                                             <td rowspan="{{ numRows }}">{{ item.code }}</td>
                                         {% endif %}
 
@@ -77,9 +78,9 @@
                                         <td>{{ commande_materiel.remise|number_format(2, '.', ' ') }}</td>
                                         
                                         {% if loop.first %}
-                                            <td rowspan="{{ numRows }}">{{ item.date | date('d-m-Y') }}</td>
+                                            
                                             <td rowspan="{{ numRows }}">
-                                                <li><a type="submit" class="btn btn-warning" href="{{path('app_detail_commande',{'id':item.id})}}"> Detail commande</a></li>
+                                                <li><a type="submit" class="btn btn-info" href="{{path('app_detail_facture',{'id':item.id})}}"> Detail facture</a></li>
                                             </td>
                                             <td rowspan="{{ numRows }}">
                                                 <div class="dropdown">
@@ -87,8 +88,8 @@
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </a>
                                                     <ul class="dropdown-menu" aria-labelledby="actionsDropdown">
-                                                        <li><a type="submit" class="dropdown-item" href="{{path('app_update_commande',{'id':item.id})}}"><i class="fas fa-edit"></i> Modifier</a></li>
-                                                        <li><a onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce matériel ?')" type="submit" class="dropdown-item" href="{{path('app_delete_commande',{'id':item.id})}}"><i class="fas fa-trash-alt"></i> Supprimer</a></li>
+                                                        <li><a type="submit" class="dropdown-item" href="{{path('app_update_facture',{'id':item.id})}}"><i class="fas fa-edit"></i> Modifier</a></li>
+                                                        <li><a onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce matériel ?')" type="submit" class="dropdown-item" href="{{path('app_delete_facture',{'id':item.id})}}"><i class="fas fa-trash-alt"></i> Supprimer</a></li>
                                                     </ul>
                                                 </div>
                                             </td>
@@ -101,14 +102,13 @@
                         </tbody>
                     </table>
                 {% else %}
-                    <div class="bg-info text-black p-3">Aucun devis disponible</div>
+                    <div class="bg-info text-black p-3">Aucune facture disponible</div>
                 {% endif %}
 
             </div>
         </div>
     </div>
 </div>
-
-
+<br> <br> <br>
 
 {% endblock %}
