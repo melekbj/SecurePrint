@@ -6,7 +6,7 @@
 <div class="container-fluid">
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title fw-semibold mb-4">Détails sur la facture N. <span class=" text-primary">{{commande.id}}</span> </h5>
+            <h5 class="card-title fw-semibold mb-4">Détails sur la facture N. <span class=" text-primary">{{ "%03d"|format(commande.id) }}</span> </h5>
             <p class="mb-0"><i>Date : {{ commande.date | date('d/m/Y') }}</i> </p>
           </div>
         </div>
@@ -48,10 +48,10 @@
 
                                     <td>{{ commande_materiel.materiel.nom }}</td>
                                     <td>{{ commande_materiel.qte }}</td>
-                                    <td>{{ commande_materiel.prix|number_format(0, '.', ' ') }}</td>
+                                    <td>{{ commande_materiel.prix|number_format(0, '.', ',') }}</td>
                                     <td>{{ commande_materiel.remise|number_format(2, '.', ' ') }}</td>
                                     <td>{{ commande_materiel.tva|number_format(0, '.', ' ') }} %</td>
-                                    <td>{{ (commande_materiel.prix * commande_materiel.qte)|number_format(0, '.', ' ') }}</td>
+                                    <td>{{ (commande_materiel.prix * commande_materiel.qte)|number_format(0, '.', ',') }}</td>
                                     
 
                                 </tr>
@@ -101,7 +101,7 @@
                             <table class="table table-striped table-bordered">
                                 <tr>
                                     <th>Total H.T</th>
-                                    <td>{{ totalHT|number_format(0, '.', ' ') }}</td>
+                                    <td>{{ totalHT|number_format(0, '.', ',') }}</td>
                                 </tr>
                                 <tr>
                                     <th>Total Remise</th>
@@ -109,7 +109,7 @@
                                 </tr>
                                 <tr>
                                     <th>Total TVA</th>
-                                    <td>{{ totalTVA|number_format(0, '.', ' ') }}</td>
+                                    <td>{{ totalTVA|number_format(0, '.', ',') }}</td>
                                 </tr>
                                 <tr>
                                     <th>TIMBRE</th>
@@ -124,7 +124,7 @@
                         </div>
                     </div>
                 
-                <a class=" mb-5 btn btn-success" href="{{path('generate_pdf_facture',{'clientId':client.id, 'commandId':commande.id})}}">Imprimer Devis</a>
+                <a class=" mb-5 btn btn-success" href="{{path('generate_pdf_facture',{'clientId':client.id, 'commandId':commande.id})}}">Imprimer Facture</a>
 
 
             </div>

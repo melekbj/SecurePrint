@@ -83,10 +83,10 @@ class AdminController extends AbstractController
         }
 
         // Retrieve the commands for this client
-        $commandes = $client->getCommandes();
+        $commandes = $client->getDevis();
 
         // Render the client information and their commands in a template
-        return $this->render('admin/detailClient.html.twig', [
+        return $this->render('admin/clients/detailClient.html.twig', [
             'client' => $client,
             'commandes' => $commandes,
         ]);
@@ -134,6 +134,64 @@ class AdminController extends AbstractController
         $this->addFlash('success', 'Client removed!');
         return $this->redirectToRoute('app_liste_clients'); 
         
+    }
+
+    #[Route('/devisByClient/{id}', name: 'app_devis')]
+    public function showDevisByClient($id, PersistenceManagerRegistry $doctrine): Response
+    {
+        // Retrieve the client information from the database based on the provided id
+        $client = $doctrine->getRepository(Clients::class)->find($id);
+
+        // Check if the client exists
+        if (!$client) {
+            throw $this->createNotFoundException('Client not found');
+        }
+
+        // Retrieve the commands for this client
+        $commandes = $client->getDevis();
+
+        // Fetch the CommandeMateriel entities associated with each Commande
+        $commandeMaterielRepository = $doctrine->getRepository(DeviMateriel::class);
+        $commandeMateriels = [];
+        foreach ($commandes as $commande) {
+            $commandeMateriels[$commande->getId()] = $commandeMaterielRepository->findBy(['devi' => $commande]);
+        }
+
+        // Render the client's commands in a template
+        return $this->render('admin/clients/devisByClient.html.twig', [
+            'commandes' => $commandes,
+            'client' => $client,
+            'commandeMateriels' => $commandeMateriels,
+        ]);
+    }
+
+    #[Route('/factureByClient/{id}', name: 'app_facture')]
+    public function showFactureByClient($id, PersistenceManagerRegistry $doctrine): Response
+    {
+        // Retrieve the client information from the database based on the provided id
+        $client = $doctrine->getRepository(Clients::class)->find($id);
+
+        // Check if the client exists
+        if (!$client) {
+            throw $this->createNotFoundException('Client not found');
+        }
+
+        // Retrieve the commands for this client
+        $commandes = $client->getFactures();
+
+        // Fetch the CommandeMateriel entities associated with each Commande
+        $commandeMaterielRepository = $doctrine->getRepository(FactureMateriel::class);
+        $commandeMateriels = [];
+        foreach ($commandes as $commande) {
+            $commandeMateriels[$commande->getId()] = $commandeMaterielRepository->findBy(['facture' => $commande]);
+        }
+
+        // Render the client's commands in a template
+        return $this->render('admin/clients/factureByClient.html.twig', [
+            'commandes' => $commandes,
+            'client' => $client,
+            'commandeMateriels' => $commandeMateriels,
+        ]);
     }
 
 // .........................................Gestion des materiels................................................
@@ -221,47 +279,37 @@ class AdminController extends AbstractController
 // .........................................Gestion des devis...............................................
     
 
-    #[Route('/devisByClient/{id}', name: 'app_devis')]
-    public function showDevisByClient($id, PersistenceManagerRegistry $doctrine): Response
-    {
-        // Retrieve the client information from the database based on the provided id
-        $client = $doctrine->getRepository(Clients::class)->find($id);
-
-        // Check if the client exists
-        if (!$client) {
-            throw $this->createNotFoundException('Client not found');
-        }
-
-        // Retrieve the commands for this client
-        $commandes = $client->getDevis();
-
-        // Fetch the CommandeMateriel entities associated with each Commande
-        $commandeMaterielRepository = $doctrine->getRepository(DeviMateriel::class);
-        $commandeMateriels = [];
-        foreach ($commandes as $commande) {
-            $commandeMateriels[$commande->getId()] = $commandeMaterielRepository->findBy(['devi' => $commande]);
-        }
-
-        // Render the client's commands in a template
-        return $this->render('admin/devis/devisByClient.html.twig', [
-            'commandes' => $commandes,
-            'client' => $client,
-            'commandeMateriels' => $commandeMateriels,
-        ]);
-    }
+  
 
     #[Route('/liste_devis', name: 'app_liste_devis')]
     public function listDevis(PersistenceManagerRegistry $doctrine, Request $request): Response
     {
         $em = $doctrine->getManager();
-        $commandes = $em->getRepository(Devi::class)->findAll();
-
-        $commandeRepository = $doctrine->getRepository(Devi::class);
+        $commandeRepository = $em->getRepository(Devi::class);
 
         $code = $request->query->get('code');
         $date = $request->query->get('date');
 
-        // 
+        // Create the query builder
+        $queryBuilder = $commandeRepository->createQueryBuilder('c');
+
+        // Apply filters
+        
+        if ($code) {
+            $queryBuilder->orWhere('c.code LIKE :code')
+                ->setParameter('code', '%' . $code . '%');
+        }
+
+        if ($date) {
+            $queryBuilder->andWhere('c.date = :date') // Adjust this based on your actual date field name
+                ->setParameter('date', new \DateTime($date));
+        }
+
+        // Get the query
+        $query = $queryBuilder->getQuery();
+
+        // Get the result of the query
+        $commandes = $query->getResult();
 
         return $this->render('admin/devis/listeDevis.html.twig', [ 
         'commandes' => $commandes,
@@ -531,16 +579,39 @@ class AdminController extends AbstractController
     public function listFactures(PersistenceManagerRegistry $doctrine, Request $request): Response
     {
         $em = $doctrine->getManager();
-        $commandes = $em->getRepository(Facture::class)->findAll();
+        $commandeRepository = $em->getRepository(Facture::class);
 
-        $commandeRepository = $doctrine->getRepository(Facture::class);
+        $code = $request->query->get('code');
+        $date = $request->query->get('date');
 
-       
+        // Create the query builder
+        $queryBuilder = $commandeRepository->createQueryBuilder('c');
 
-        return $this->render('admin/factures/listeFactures.html.twig', [ 
-        'commandes' => $commandes,
+        // Apply filters
+        
+        if ($code) {
+            $queryBuilder->orWhere('c.code LIKE :code')
+                ->setParameter('code', '%' . $code . '%');
+        }
+
+        if ($date) {
+            $queryBuilder->andWhere('c.date = :date') // Adjust this based on your actual date field name
+                ->setParameter('date', new \DateTime($date));
+        }
+
+        // Get the query
+        $query = $queryBuilder->getQuery();
+
+        // Get the result of the query
+        $commandes = $query->getResult();
+
+        return $this->render('admin/factures/listeFactures.html.twig', [
+            'commandes' => $commandes,
         ]);
     }
+
+
+
 
 
     #[Route('/detail_facture/{id}', name: 'app_detail_facture')]

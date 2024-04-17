@@ -1,0 +1,78 @@
+{% extends 'baseAdmin.html.twig' %}
+
+
+{% block body %}
+
+<style>
+.card:hover {
+    transform: scale(1.05);
+    transition: transform .2s;
+}
+</style>
+
+  <div class="container-fluid">
+        
+          <div class="card-body">
+            {# <h5 class="card-title fw-semibold mb-4 text-black">Informations sur le client</h5> #}
+            {# <p class="mb-0">This is a sample page </p> #}
+          </div>
+        
+  </div>
+
+  <div class="container-fluid">
+    <div class="row">
+        <div style="margin-top:50px;" class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    Liste des devis
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Devis pour {{client.nomprenom}}</h5>
+                    <p class="card-text">Cliquez sur le bouton ci-dessous pour voir tous les devis associés à ce client.</p>
+                    <a href="{{ path('app_devis', {'id': client.id}) }}" class="btn btn-primary">Les devis</a>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top:-70px;" class="col-md-4">
+          <div class="card">
+              <div class="card-header">
+                  Informations sur le client
+              </div>
+              <div class="card-body">
+                  <div class="row">
+                      <div class="col-md-6">
+                          <h5 class="">Nom de client </h5>
+                          <h5 class="">Adresse </h5>
+                          <h5 class="">Ville </h5>
+                          <h5 class="">Telephone </h5>
+                      </div>
+                      <div class="col-md-6">
+                          <h5 class="text-primary">{{client.nomprenom}}</h5>
+                          <h5 class="text-primary">{{client.adresse}}</h5>
+                          <h5 class="text-primary">{{client.ville}}</h5>
+                          <h5 class="text-primary">{{client.phone}}</h5>
+                      </div>
+                  </div>
+                  
+              </div>
+          </div>
+        </div>
+
+
+        <div style="margin-top:50px;" class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    Liste des factures
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Factures pour {{client.nomprenom}}</h5>
+                    <p class="card-text">Cliquez sur le bouton ci-dessous pour voir toutes les factures associés à ce client.</p>
+                    <a href="{{ path('app_facture', {'id': client.id}) }}" class="btn btn-primary">Les factures</a>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+{% endblock %}

@@ -15,7 +15,7 @@
                     </div>
 
                     <div class="form-group ml-3" style="margin-right:10px;">
-                        <input type="text" name="code" class="form-control" placeholder="N° de commande">
+                        <input type="text" name="code" class="form-control" placeholder="N° de facture">
                     </div>
 
                     <div class="form-group ml-3" style="margin-right:10px;">
@@ -44,8 +44,8 @@
                 {% endfor %}
 
                 {% if commandes is not empty %}
-                    <table class="table table-bordered">
-                        <thead class="thead-dark">
+                    <table class="table table-responsive-lg table-bordered">
+                        <thead style ="background-color:#5D87FF;color:white;" class="">
                             <tr>
                                 <th>Client</th>
                                 <th>Date</th>
@@ -80,7 +80,7 @@
                                         {% if loop.first %}
                                             
                                             <td rowspan="{{ numRows }}">
-                                                <li><a type="submit" class="btn btn-info" href="{{path('app_detail_facture',{'id':item.id})}}"> Detail facture</a></li>
+                                                <li><a type="submit" class="btn btn-warning" href="{{path('app_detail_facture',{'id':item.id})}}"> Detail facture</a></li>
                                             </td>
                                             <td rowspan="{{ numRows }}">
                                                 <div class="dropdown">

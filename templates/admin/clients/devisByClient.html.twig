@@ -6,7 +6,7 @@
         <div class="card">
           <div class="card-body">
 
-            <h2 class=" text-github font-weight-bold my-4">Les commandes de <span class=" text-primary">{{client.nomprenom}}</span></h2>          
+            <h2 class=" text-github font-weight-bold my-4">Les devis de <span class=" text-primary">{{client.nomprenom}}</span></h2>          
           </div>
         </div>
       </div>
@@ -45,8 +45,8 @@
                         </thead>
                         <tbody>
                             {% for item in commandes %}
-                                {% set numRows = item.commandemateriels|length %}
-                                {% for commande_materiel in item.commandemateriels %}
+                                {% set numRows = item.devimateriels|length %}
+                                {% for commande_materiel in item.devimateriels %}
                                     <tr>
                                         {% if loop.first %}
                                             <td rowspan="{{ numRows }}">{{ item.client.nomprenom }}</td>
@@ -64,7 +64,7 @@
                                             <td rowspan="{{ numRows }}">{{ item.timbre }}</td>
                                             <td rowspan="{{ numRows }}">{{ item.date | date('d-m-Y') }}</td>
                                             <td rowspan="{{ numRows }}">
-                                                <li><a type="submit" class="btn btn-warning" href="{{path('app_detail_commande',{'id':item.id})}}"> Detail commande</a></li>
+                                                <li><a type="submit" class="btn btn-warning" href="{{path('app_detail_devis',{'id':item.id})}}"> Detail devis</a></li>
                                             </td>
                                             <td rowspan="{{ numRows }}">
                                                 <div class="dropdown">
@@ -72,9 +72,9 @@
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </a>
                                                     <ul class="dropdown-menu" aria-labelledby="actionsDropdown">
-                                                    <li><a type="submit" class="dropdown-item" href="{{path('app_update_commande',{'id':item.id})}}"><i class="fas fa-edit"></i> Modifier</a></li>
-                                                    <li><a onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce matériel ?')" type="submit" class="dropdown-item" href="{{path('app_delete_commande',{'id':item.id})}}"><i class="fas fa-trash-alt"></i> Supprimer</a></li>
-                                                    <li><a type="submit" class="dropdown-item" href="{{path('generate_pdf',{'clientId':client.id, 'commandId':item.id})}}"><i class="fas fa-print"></i> Imprimer devis</a></li>
+                                                    <li><a type="submit" class="dropdown-item" href="{{path('app_update_devis',{'id':item.id})}}"><i class="fas fa-edit"></i> Modifier</a></li>
+                                                    <li><a onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce matériel ?')" type="submit" class="dropdown-item" href="{{path('app_delete_devis',{'id':item.id})}}"><i class="fas fa-trash-alt"></i> Supprimer</a></li>
+                                                    <li><a type="submit" class="dropdown-item" href="{{path('generate_pdf_devis',{'clientId':client.id, 'commandId':item.id})}}"><i class="fas fa-print"></i> Imprimer devis</a></li>
 
                                                 
                                                     </ul>
@@ -91,7 +91,7 @@
                         </tbody>
                     </table>
                 {% else %}
-                    <div class="bg-info text-black p-3">Aucune commande disponible</div>
+                    <div class="bg-info text-black p-3">Aucun devis disponible pour ce client</div>
                 {% endif %}
 
             </div>
